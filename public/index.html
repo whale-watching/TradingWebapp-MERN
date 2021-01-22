@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>Programmable Trading with virtual money</title>
+		<link rel="icon" href="https://previews.123rf.com/images/putracetol/putracetol1706/putracetol170603866/80806099-stock-market-business-icon-logo-design-element.jpg" type="image/icon type">
+
+	</head>
+
+	<body>
+
+	  <h1>Welcome</h1>
+
+
+	  <select id="cryptoSelectForm" class="cryptoSelectClass" onChange="cryptoSelected();">
+	  	<option selected="true" disabled="disabled">Choose Stocks/Crypto</option>    
+		  <option value="BITSTAMP:BTCUSD">Bitcoin</option>
+		  <option value="BITSTAMP:XRPUSD">Ripple</option>
+	  </select>
+
+
+	  <div id = "tradingviewDivChart" align="left"></div>
+
+
+	  <div id= "typeOfOrder">
+
+	  	<div id= "buyOrders">
+	  		<form>
+		  		<label>Buy Now %:</label>
+	  			<input type="number" id="buyNowAmt" name="buyNowAmt">
+	  		  <input type="submit" value="Submit">
+	  		</form>
+
+	  		<form>
+		  		<label>Buy when price below:</label>
+		  		<input type="number" id="buyBelow" name="buyBelow">
+		  		<label>Buy amt %:</label>
+	  			<input type="number" id="buyBelowAmt" name="buyBelowAmt">
+	  		  <input type="submit" value="Submit">
+	  		</form>
+
+	  		<form>
+		  		<label>Buy when price reach:</label>
+		  		<input type="number" id="buyAbove" name="buyAbove">
+		  		<label>Buy amt %:</label>
+	  			<input type="number" id="buyAboveAmt" name="buyAboveAmt">
+	  		  <input type="submit" value="Submit">
+	  		</form>
+
+	  	</div>
+
+	  	<br><br>
+
+	  	<div id= "sellOrders">
+	  		<form>
+		  		<label>Sell Now %:</label>
+	  			<input type="number" id="sellNowAmt" name="sellNowAmt">
+	  		  <input type="submit" value="Submit">
+	  		</form>
+
+	  		<form>
+		  		<label>sell when price below:</label>
+	  			<input type="number" id="sellBelow" name="sellBelow">
+		  		<label>sell amt %:</label>
+	  			<input type="number" id="sellBelowAmt" name="sellBelowAmt">
+	  		  <input type="submit" value="Submit">
+	  		</form>
+
+	  		<form>
+		  		<label>sell when price above:</label>
+	  			<input type="number" id="sellAbove" name="sellAbove">
+		  		<label>sell amt %:</label>
+	  			<input type="number" id="sellAboveAmt" name="sellAboveAmt">
+	  		  <input type="submit" value="Submit">
+	  		</form>
+	  	</div>
+
+	  	<br><br>
+
+	  	<div id= "sortBuyOrder">
+	  		<form>
+		  		<label>Sort Now:</label>
+	  			<input type="number" id="sortNowAmt" name="sortNowAmt">
+	  		  <input type="submit" value="Submit">
+	  		</form>
+
+	  		<form>
+		  		<label>sort when price below:</label>
+	  			<input type="number" id="sortBelow" name="sortBelow">
+		  		<label>sell amt %:</label>
+	  			<input type="number" id="sortBelowAmt" name="sortBelowAmt">
+	  		  <input type="submit" value="Submit">
+	  		</form>
+
+	  		<form>
+		  		<label>sort when price above:</label>
+	  			<input type="number" id="sortAbove" name="sortAbove">
+		  		<label>sell amt %:</label>
+	  			<input type="number" id="sortAboveAmt" name="sortAboveAmt">
+	  		  <input type="submit" value="Submit">
+	  		</form>
+	  	</div>
+
+	  </div>
+
+
+	</body>
+
+	<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+	<script src="js/widget.js"></script>
+
+</html>
