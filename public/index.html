@@ -9,114 +9,116 @@
 
 	<body>
 
-	  <h1>Welcome</h1>
+		<h1>Welcome</h1>
 
 
-	  <select id="cryptoSelectForm" class="cryptoSelectClass" onChange="cryptoSelected();">
-	  	<option selected="true" disabled="disabled">Choose Stocks/Crypto</option>    
-		  <option value="BITSTAMP:BTCUSD">Bitcoin</option>
-		  <option value="BITSTAMP:XRPUSD">Ripple</option>
-	  </select>
+		<select id="cryptoSelectForm" class="cryptoSelectClass" onChange="cryptoSelected();">
+			<option selected="true" disabled="disabled">Choose Stocks/Crypto</option>    
+			<option value="BITSTAMP:BTCUSD">Bitcoin</option>
+			<option value="BITSTAMP:XRPUSD">Ripple</option>
+		</select>
 
 
-	  <div id = "tradingviewDivChart" align="left"></div>
+		<div id = "tradingviewDivChart" align="left"></div>
 
-	  <!-- to avoid being rediected to next page -->
-	  <style>
+		<!-- to avoid being rediected to next page -->
+		<style>
 		.hide { position:absolute; top:-1px; left:-1px; width:1px; height:1px; }
-	  </style> 
-	  <iframe name="hiddenFrame" class="hide"></iframe>
+		</style> 
+		<iframe name="hiddenFrame" class="hide"></iframe>
 
 
-	  <div id= "typeOfOrder">
+		<div id= "typeOfOrder">
 
-	  	<div id= "buyOrders">
-	  		<form method="post" action="/formData" target="hiddenFrame">
-		  		<label>Buy Now %:</label>
-	  			<input type="number" id="buyNowAmt" name="buyNowAmt">
-	  		  <input type="submit" value="Submit">
-	  		</form>
+			<div id= "buyOrders">
 
-	  		<form method="post" action="/formData" target="hiddenFrame">
-		  		<label>Buy when price below:</label>
-		  		<input type="number" id="buyBelow" name="buyBelow">
-		  		<label>Buy amt %:</label>
-	  			<input type="number" id="buyBelowAmt" name="buyBelowAmt">
-	  		  <input type="submit" value="Submit">
-	  		</form>
+				<form class="orderForm" method="post" action="/formData" target="hiddenFrame">
+					<label>Buy Now %:</label>
+					<input type="number" id="buyNowAmt" name="buyNowAmt">
+					<input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
+				</form>
 
-	  		<form method="post" action="/formData" target="hiddenFrame">
+				<form class="orderForm" method="post" action="/formData" target="hiddenFrame">
+					<label>Buy when price below:</label>
+					<input type="number" id="buyBelow" name="buyBelow">
+					<label>Buy amt %:</label>
+					<input type="number" id="buyBelowAmt" name="buyBelowAmt">
+					<input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
+				</form>
+
+				<form method="post" action="/formData" target="hiddenFrame">
 				<label>Buy when price reach:</label>
-		  		<input type="number" id="buyAbove" name="buyAbove">
-		  		<label>Buy amt %:</label>
-	  			<input type="number" id="buyAboveAmt" name="buyAboveAmt">
-	  		  <input type="submit" value="Submit">
-	  		</form>
+					<input type="number" id="buyAbove" name="buyAbove">
+					<label>Buy amt %:</label>
+					<input type="number" id="buyAboveAmt" name="buyAboveAmt">
+					<input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
+				</form>
 
-	  	</div>
+			</div>
 
-	  	<br><br>
+			<br><br>
 
-	  	<div id= "sellOrders">
+			<div id= "sellOrders">
 			<form method="post" action="/formData" target="hiddenFrame">
 				<label>Sell Now %:</label>
-	  			<input type="number" id="sellNowAmt" name="sellNowAmt">
-	  		  <input type="submit" value="Submit">
-	  		</form>
+					<input type="number" id="sellNowAmt" name="sellNowAmt">
+					<input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
+				</form>
 
-	  		<form method="post" action="/formData" target="hiddenFrame">
+				<form method="post" action="/formData" target="hiddenFrame">
 				<label>sell when price below:</label>
-	  			<input type="number" id="sellBelow" name="sellBelow">
-		  		<label>sell amt %:</label>
-	  			<input type="number" id="sellBelowAmt" name="sellBelowAmt">
-	  		  <input type="submit" value="Submit">
-	  		</form>
+					<input type="number" id="sellBelow" name="sellBelow">
+					<label>sell amt %:</label>
+					<input type="number" id="sellBelowAmt" name="sellBelowAmt">
+					<input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
+				</form>
 
-	  		<form method="post" action="/formData" target="hiddenFrame">
+				<form method="post" action="/formData" target="hiddenFrame">
 				<label>sell when price above:</label>
-	  			<input type="number" id="sellAbove" name="sellAbove">
-		  		<label>sell amt %:</label>
-	  			<input type="number" id="sellAboveAmt" name="sellAboveAmt">
-	  		  <input type="submit" value="Submit">
-	  		</form>
-	  	</div>
+					<input type="number" id="sellAbove" name="sellAbove">
+					<label>sell amt %:</label>
+					<input type="number" id="sellAboveAmt" name="sellAboveAmt">
+					<input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
+				</form>
+			</div>
 
-	  	<br><br>
+			<br><br>
 
-	  	<div id= "sortBuyOrder">
+			<div id= "sortBuyOrder">
 			<form method="post" action="/formData" target="hiddenFrame">
 				<label>Sort Now %:</label>
-	  			<input type="number" id="sortNowAmt" name="sortNowAmt">
-	  		  <input type="submit" value="Submit">
-	  		</form>
+					<input type="number" id="sortNowAmt" name="sortNowAmt">
+					<input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
+				</form>
 
-	  		<form method="post" action="/formData" target="hiddenFrame">
+				<form method="post" action="/formData" target="hiddenFrame">
 				<label>sort when price below:</label>
-	  			<input type="number" id="sortBelow" name="sortBelow">
-		  		<label>sort amt %:</label>
-	  			<input type="number" id="sortBelowAmt" name="sortBelowAmt">
-	  		  <input type="submit" value="Submit">
-	  		</form>
+					<input type="number" id="sortBelow" name="sortBelow">
+					<label>sort amt %:</label>
+					<input type="number" id="sortBelowAmt" name="sortBelowAmt">
+					<input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
+				</form>
 
-	  		<form method="post" action="/formData" target="hiddenFrame">
+				<form method="post" action="/formData" target="hiddenFrame">
 				<label>sort when price above:</label>
-	  			<input type="number" id="sortAbove" name="sortAbove">
-		  		<label>sort amt %:</label>
-	  			<input type="number" id="sortAboveAmt" name="sortAboveAmt">
-	  		  <input type="submit" value="Submit">
-	  		</form>
-	  	</div>
+					<input type="number" id="sortAbove" name="sortAbove">
+					<label>sort amt %:</label>
+					<input type="number" id="sortAboveAmt" name="sortAboveAmt">
+					<input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
+				</form>
+			</div>
 
-	  </div>
+		</div>
 
-	  <div id="pendingOrder">
-      <h1>Past orders are as folllow </h1>
-	  </div>
+		<div id="pendingOrder">
+		<h1>Past orders are as folllow </h1>
+		</div>
 
 
 	</body>
 
 	<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-	<script src="js/widget.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="js/widget.js"></script>
 
 </html>
