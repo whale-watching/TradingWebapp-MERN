@@ -5,11 +5,15 @@ var bodyParser = require('body-parser');
 var orderUtil = require('./orderUtil.js');
 var mongoUtil = require('./mongoUtil.js');
 
-
 const userId = 1;
 var currentAmt = 100;
 
-orderUtil.updateOrders(); // check if previous orders was completed, updates the current Amt accordingly
+// check if a past order was completed, every 1 sec
+var time_interval = 1000; // i.e 1 sec interval
+setInterval(function() {
+  orderUtil.updateOrders(); // check if previous orders was completed, updates the current Amt accordingly
+}, time_interval);
+
 mongoUtil.refreshTable(); // shows all order present in the DB's orders
 
 var miscUtil = require('./miscUtil.js');
