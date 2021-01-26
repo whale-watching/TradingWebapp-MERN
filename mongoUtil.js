@@ -13,16 +13,14 @@ function addOrderToDb(jsonData) {
     });
 }
 
+// function to get all orders from database and show to the frontend
 function refreshTable() {
     
 }
 
-function updateOrders() {
 
-}
 
 module.exports = {
     addOrderToDb: addOrderToDb,
     refreshTable: refreshTable,
-    updateOrders: updateOrders,
 };
