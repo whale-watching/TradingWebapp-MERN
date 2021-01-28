@@ -4,9 +4,13 @@ var bodyParser = require('body-parser');
 // importing user modules
 var orderUtil = require('./orderUtil.js');
 var mongoUtil = require('./mongoUtil.js');
+var miscUtil = require('./miscUtil.js');
 
 const userId = 1;
 var currentAmt = 100;
+var holdings = ["BTCUSD"];
+var jsonUserData = {"userId":userId, "currentAmt":currentAmt, "holdings":holdings};
+mongoUtil.updateUserdataToDb(jsonUserData);
 
 // check if a past order was completed, every 1 sec
 var time_interval = 1000; // i.e 1 sec interval
@@ -15,8 +19,6 @@ setInterval(function() {
 }, time_interval);
 
 mongoUtil.refreshTable(); // shows all order present in the DB's orders
-
-var miscUtil = require('./miscUtil.js');
 
 var app = express();
 var urlencodedParser = bodyParser.urlencoded({ extended: true })
