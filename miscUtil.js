@@ -3,7 +3,7 @@ function addMetaData(jsonData, userId, currentAmt) {
     jsonData["userId"] = userId;
     jsonData["orderCompleted"] = false;
     jsonData["timestamp"] = Date.now();
-    // jsonData["crypto"] = document.getElementById("cryptoSelectForm").value;
+    jsonData["crypto"] = "BITSTAMP:BTCUSD"; // manually adding for now
     return jsonData;
 }
 

@@ -1,4 +1,4 @@
-// function to update the order present in the database
+// function to update the past orders in the database if they are completed, using coincap APIs
 function updateOrders() {
     
 }

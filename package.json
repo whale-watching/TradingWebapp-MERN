@@ -11,7 +11,9 @@
   "dependencies": {
     "express": "^4.17.1",
     "mongodb": "^3.6.3",
-    "uuid": "^8.3.2"
+    "request": "^2.88.2",
+    "uuid": "^8.3.2",
+    "ws": "^7.4.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"

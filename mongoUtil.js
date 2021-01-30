@@ -48,23 +48,9 @@ function addOrderToDb(jsonData) {
     });
 }
 
-// function to get all orders from database and show to the frontend
-function refreshTable() {
-    MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) {
-        if (err) throw err;
-        var dbo = db.db("mainDb");
-        dbo.collection("allOrders").find({}).toArray(function(err, result) {
-            if (err) throw err;
-            // console.log(result); //all orders
-            db.close();
-        });
-    });
-}
-
 
 
 module.exports = {
     updateUserdataToDb: updateUserdataToDb,
     addOrderToDb: addOrderToDb,
-    refreshTable: refreshTable,
 };
