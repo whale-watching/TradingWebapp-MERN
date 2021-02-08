@@ -1,27 +1,35 @@
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/mydb";
 
-
+// need improvement, maybe use only one dbo
 function updateUserdataToDb(jsonData) {
-    /*
+    
     MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) {
         if (err) throw err;
         var dbo = db.db("mainDb");
         dbo.collection("userData").find({"userId": jsonData["userId"]}).toArray(function(err, user) {
             if (err) throw err;
 
-            if(user.count) { // userId already exists
-                console.log(user.count);
-                console.log(jsonData["userId"]);
+            if(user.length) { // userId already exists
+                console.log("Updating userMetadata to ", jsonData);
                 // update the userData in Db
-
-            } else {
-                // create entry and add to Db
-                // need improvement, maybe use only one dbo
+                var newValues = {$set : jsonData} 
                 MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) {
                     if (err) throw err;
                     var dbo = db.db("mainDb");
-                    dbo.collection("userId").insertOne(jsonData, function(err, res) {
+                    dbo.collection("userData").updateOne({"userId": jsonData["userId"]}, newValues, function(err, res) {
+                        if (err) throw err;
+                        console.log("UserMetadata updated");
+                        db.close();
+                    });
+                });
+
+            } else {
+                // create entry and add to Db
+                MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) {
+                    if (err) throw err;
+                    var dbo = db.db("mainDb");
+                    dbo.collection("userData").insertOne(jsonData, function(err, res) {
                         if (err) throw err;
                         console.log("inserted user to db success");
                         db.close();
@@ -33,7 +41,7 @@ function updateUserdataToDb(jsonData) {
         });
 
     });
-    */
+    
 }
 
 function addOrderToDb(jsonData) {

@@ -1,17 +1,22 @@
 var display = require('./display.js');
 const WebSocket = require('ws');
 
-// start websocket to keep listining to curretn price, BTCUSD
+var currentPrice;
+
+// start websocket to always keep listining and updating the current price.
 function startWebsocket() {
     const ws = new WebSocket('wss://ws.coincap.io/prices?assets=bitcoin');
     ws.on('message', function incoming(data) {
-        var currentPriceBTC = data;
-        console.log(currentPriceBTC);
-        display.updateCurrentPrice(currentPriceBTC);
+        currentPrice = JSON.parse(data)["bitcoin"];
     });
+}
+
+function getCurrentPrice() {
+    return currentPrice;
 }
 
 
 module.exports = {
     startWebsocket: startWebsocket,
+    getCurrentPrice: getCurrentPrice,
 };

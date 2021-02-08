@@ -14,12 +14,7 @@ function displayOrders() {
     });
 }
 
-// updates total worth, holding and profit% in orders 
-function updateCurrentPrice(currentPriceBTC) {
-    console.log("updating huhhh");
-}
 
 module.exports = {
     displayOrders: displayOrders,
-    updateCurrentPrice: updateCurrentPrice,
 }

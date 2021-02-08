@@ -4,111 +4,125 @@
 	<head>
 		<title>Programmable Trading with virtual money</title>
 		<link rel="icon" href="https://previews.123rf.com/images/putracetol/putracetol1706/putracetol170603866/80806099-stock-market-business-icon-logo-design-element.jpg" type="image/icon type">
-
+    <style>
+      p.ex1 {
+        font-size: 30px;
+      }
+      p.ex2 {
+        font-size: 50px;
+      }
+    </style>
 	</head>
+
+
 
 	<body>
 
     <h1>Welcome</h1>
     
-	<br><br>
+    <br><br>
 
-	<div id="otherUserData">
+    <div id="otherUserData">
 
-		<h2>Total worth = </h1>
-		<h2 id="totalWorth"></h2>
-		<br>
-		
-		<h2>Current Amount = </h2>
-		<h2 id="totalCash"></h2>
-		<br>
+      <p>Total worth = </p>
+      <p id="totalWorth"></p>
+      <br>
+      
+      <p>Current Cash to trade = </p>
+      <p id="currentFiat"></p>
+      <br>
 
-		<h2>Holdings</h2>
-		<h3>BTCUSD = </h3>
-		<h3 id=holdingBTC></h3>
-		<br>
+      <p>Holdings</p>
+      <p>BTCUSD = </p>
+      <p id=holdingBTC></p>
+      <br>
 
-    </div>
-  
+      <p>Sorted Holdings</p>
+      <p>BTCUSD = </p>
+      <p id=sortedHoldingBTC></p>
+      <br>
 
-		<select id="cryptoSelectForm" class="cryptoSelectClass" onChange="cryptoSelected();">
-			<!-- <option selected="true" disabled="disabled">Choose Stocks/Crypto</option>     -->
-			<option value="BITSTAMP:BTCUSD">Bitcoin</option>
-			<!-- <option value="BITSTAMP:XRPUSD">Ripple</option> -->
-		</select>
-		<!-- keep only one crypto for simplicity, display the wizard manually for now -->
-		<body onload="cryptoSelected()"></body> 
+      </div>
+    
 
-
-		<div id = "tradingviewDivChart" align="left"></div>
-
-		<!-- to avoid being rediected to next page -->
-		<style>
-		.hide { position:absolute; top:-1px; left:-1px; width:1px; height:1px; }
-		</style> 
-		<iframe name="hiddenFrame" class="hide"></iframe>
+      <select id="cryptoSelectForm" class="cryptoSelectClass" onChange="cryptoSelected();">
+        <!-- <option selected="true" disabled="disabled">Choose Stocks/Crypto</option>     -->
+        <option value="BITSTAMP:BTCUSD">Bitcoin</option>
+        <!-- <option value="BITSTAMP:XRPUSD">Ripple</option> -->
+      </select>
+      <!-- keep only one crypto for simplicity, display the wizard manually for now -->
+      <body onload="cryptoSelected()"></body> 
 
 
-		<div id= "typeOfOrder">
+      <div id = "tradingviewDivChart" align="left"></div>
 
-			<div id= "buyOrders">
-
-				<form class="orderForm" method="post" action="/formData" target="hiddenFrame">
-					<label>Buy Now %:</label>
-					<input type="number" id="buyNowAmt" name="buyNowAmt">
-					<input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
-				</form>
-
-				<form class="orderForm" method="post" action="/formData" target="hiddenFrame">
-					<label>Buy when price below:</label>
-					<input type="number" id="buyBelow" name="buyBelow">
-					<label>Buy amt %:</label>
-					<input type="number" id="buyBelowAmt" name="buyBelowAmt">
-					<input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
-				</form>
-
-				<form method="post" action="/formData" target="hiddenFrame">
-				<label>Buy when price reach:</label>
-					<input type="number" id="buyAbove" name="buyAbove">
-					<label>Buy amt %:</label>
-					<input type="number" id="buyAboveAmt" name="buyAboveAmt">
-					<input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
-				</form>
-
-			</div>
-
-			<br><br>
+      <!-- to avoid being rediected to next page -->
+      <style>
+      .hide { position:absolute; top:-1px; left:-1px; width:1px; height:1px; }
+      </style> 
+      <iframe name="hiddenFrame" class="hide"></iframe>
 
 
-			<div id= "sortBuyOrder">
-			<form method="post" action="/formData" target="hiddenFrame">
-				<label>Sort Now %:</label>
-					<input type="number" id="sortNowAmt" name="sortNowAmt">
-					<input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
-				</form>
+      <div id= "typeOfOrder">
 
-				<form method="post" action="/formData" target="hiddenFrame">
-				<label>sort when price below:</label>
-					<input type="number" id="sortBelow" name="sortBelow">
-					<label>sort amt %:</label>
-					<input type="number" id="sortBelowAmt" name="sortBelowAmt">
-					<input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
-				</form>
+        <div id= "buyOrders">
 
-				<form method="post" action="/formData" target="hiddenFrame">
-				<label>sort when price above:</label>
-					<input type="number" id="sortAbove" name="sortAbove">
-					<label>sort amt %:</label>
-					<input type="number" id="sortAboveAmt" name="sortAboveAmt">
-					<input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
-				</form>
-			</div>
+          <form class="orderForm" method="post" action="/formData" target="hiddenFrame">
+            <label>Buy Now %:</label>
+            <input type="number" id="buyNowAmt" name="buyNowAmt">
+            <input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
+          </form>
 
-		</div>
+          <form class="orderForm" method="post" action="/formData" target="hiddenFrame">
+            <label>Buy when price below:</label>
+            <input type="number" id="buyBelow" name="buyBelow">
+            <label>Buy amt %:</label>
+            <input type="number" id="buyBelowAmt" name="buyBelowAmt">
+            <input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
+          </form>
 
-		<div id="pendingOrder">
-		<h1>Past orders are as folllow </h1>
-		</div>
+          <form method="post" action="/formData" target="hiddenFrame">
+          <label>Buy when price reach:</label>
+            <input type="number" id="buyAbove" name="buyAbove">
+            <label>Buy amt %:</label>
+            <input type="number" id="buyAboveAmt" name="buyAboveAmt">
+            <input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
+          </form>
+
+        </div>
+
+        <br><br>
+
+
+        <div id= "sortBuyOrder">
+        <form method="post" action="/formData" target="hiddenFrame">
+          <label>Sort Now %:</label>
+            <input type="number" id="sortNowAmt" name="sortNowAmt">
+            <input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
+          </form>
+
+          <form method="post" action="/formData" target="hiddenFrame">
+          <label>sort when price below:</label>
+            <input type="number" id="sortBelow" name="sortBelow">
+            <label>sort amt %:</label>
+            <input type="number" id="sortBelowAmt" name="sortBelowAmt">
+            <input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
+          </form>
+
+          <form method="post" action="/formData" target="hiddenFrame">
+          <label>sort when price above:</label>
+            <input type="number" id="sortAbove" name="sortAbove">
+            <label>sort amt %:</label>
+            <input type="number" id="sortAboveAmt" name="sortAboveAmt">
+            <input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
+          </form>
+        </div>
+
+      </div>
+
+      <div id="pendingOrder">
+      <h1>Past orders are as folllow </h1>
+      </div>
 
 
 	</body>
@@ -116,5 +130,26 @@
 	<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="js/widget.js"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.1/socket.io.js"></script>
+  
+  <script>
+    var socket = io('http://localhost:8080');
+    socket.on('connect', function(){ console.log('connected to socket'); }); 
+
+    socket.on('userMetadata', function(userMetadata) {
+
+      document.getElementById("currentFiat").innerHTML = userMetadata["currentFiat"];
+      document.getElementById("holdingBTC").innerHTML = userMetadata["holdings"]["BTCUSD"];
+      // document.getElementById("sortedHoldingBTC").innerHTML = userMetadata["sortedHoldings"]["BTCUSD"]
+      // console.log(userMetadata["sortedHoldings"]["BTCUSD"]);
+
+      let totalWorth = userMetadata["currentFiat"] + 
+                      userMetadata["holdings"]["BTCUSD"]*userMetadata["currentPrice"]["bitcoin"];
+      // console.log(totalWorth);
+      document.getElementById("totalWorth").innerHTML = totalWorth;
+    });
+  </script>
 
 </html>
