@@ -15,7 +15,7 @@ const userId = 1;
 var currentFiat = 1000;
 var holdings = {"BTCUSD": 0};  // stores the value in its respective coin not in dollars
 // shortedHolding should store the amt of BTC and also the price then
-var sortedHoldings = {"BTCUSD": 0}; // stores the value in its respective coin not in dollars
+var sortedHoldings = {"BTCUSD": []}; // stores the value in its respective coin not in dollars
 var jsonUserData = {"userId":userId, "currentFiat":currentFiat, "holdings":holdings, "sortedHoldings": sortedHoldings};
 mongoUtil.updateUserdataToDb(jsonUserData);
 
@@ -66,7 +66,8 @@ app.post('/formData', urlencodedParser, function (req, res) {
         for(let i=0; i<sortAmtIds.length; i++) {
             if(sortAmtIds[i] in jsonData){
                 currentFiat-= jsonData[sortAmtIds[i]];
-                sortedHoldings["BTCUSD"] += jsonData[sortAmtIds[i]]/currentPrice;
+                let temp = [jsonData[sortAmtIds[i]]/currentPrice, currentPrice];
+                sortedHoldings["BTCUSD"].push(temp);
                 console.log("current cash changed to ", currentFiat);
                 console.log("new sorted btc holding ", jsonData[sortAmtIds[i]]/currentPrice);
                 break;

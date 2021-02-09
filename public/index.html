@@ -35,11 +35,13 @@
       <p>Holdings</p>
       <p>BTCUSD = </p>
       <p id=holdingBTC></p>
+      <p id=holdingBTCWorth></p>
       <br>
 
       <p>Sorted Holdings</p>
       <p>BTCUSD = </p>
       <p id=sortedHoldingBTC></p>
+      <p id=sortedHoldingBTCWorth></p>
       <br>
 
       </div>
@@ -68,7 +70,7 @@
         <div id= "buyOrders">
 
           <form class="orderForm" method="post" action="/formData" target="hiddenFrame">
-            <label>Buy Now %:</label>
+            <label>Buy Now :</label>
             <input type="number" id="buyNowAmt" name="buyNowAmt">
             <input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
           </form>
@@ -76,7 +78,7 @@
           <form class="orderForm" method="post" action="/formData" target="hiddenFrame">
             <label>Buy when price below:</label>
             <input type="number" id="buyBelow" name="buyBelow">
-            <label>Buy amt %:</label>
+            <label>Buy amt :</label>
             <input type="number" id="buyBelowAmt" name="buyBelowAmt">
             <input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
           </form>
@@ -84,7 +86,7 @@
           <form method="post" action="/formData" target="hiddenFrame">
           <label>Buy when price reach:</label>
             <input type="number" id="buyAbove" name="buyAbove">
-            <label>Buy amt %:</label>
+            <label>Buy amt :</label>
             <input type="number" id="buyAboveAmt" name="buyAboveAmt">
             <input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
           </form>
@@ -96,7 +98,7 @@
 
         <div id= "sortBuyOrder">
         <form method="post" action="/formData" target="hiddenFrame">
-          <label>Sort Now %:</label>
+          <label>Sort Now :</label>
             <input type="number" id="sortNowAmt" name="sortNowAmt">
             <input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
           </form>
@@ -104,7 +106,7 @@
           <form method="post" action="/formData" target="hiddenFrame">
           <label>sort when price below:</label>
             <input type="number" id="sortBelow" name="sortBelow">
-            <label>sort amt %:</label>
+            <label>sort amt :</label>
             <input type="number" id="sortBelowAmt" name="sortBelowAmt">
             <input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
           </form>
@@ -112,7 +114,7 @@
           <form method="post" action="/formData" target="hiddenFrame">
           <label>sort when price above:</label>
             <input type="number" id="sortAbove" name="sortAbove">
-            <label>sort amt %:</label>
+            <label>sort amt :</label>
             <input type="number" id="sortAboveAmt" name="sortAboveAmt">
             <input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
           </form>
@@ -134,22 +136,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.1/socket.io.js"></script>
   
-  <script>
-    var socket = io('http://localhost:8080');
-    socket.on('connect', function(){ console.log('connected to socket'); }); 
-
-    socket.on('userMetadata', function(userMetadata) {
-
-      document.getElementById("currentFiat").innerHTML = userMetadata["currentFiat"];
-      document.getElementById("holdingBTC").innerHTML = userMetadata["holdings"]["BTCUSD"];
-      // document.getElementById("sortedHoldingBTC").innerHTML = userMetadata["sortedHoldings"]["BTCUSD"]
-      // console.log(userMetadata["sortedHoldings"]["BTCUSD"]);
-
-      let totalWorth = userMetadata["currentFiat"] + 
-                      userMetadata["holdings"]["BTCUSD"]*userMetadata["currentPrice"]["bitcoin"];
-      // console.log(totalWorth);
-      document.getElementById("totalWorth").innerHTML = totalWorth;
-    });
-  </script>
+  <script src="js/script.js"></script>
 
 </html>
