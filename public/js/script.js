@@ -26,11 +26,11 @@ socket.on('userMetadata', function(userMetadata) {
 
     let totalWorth = currentFiat + holdingBTC*currentPrice + sortedHoldingWorthNow;
 
-    document.getElementById("totalWorth").innerHTML = totalWorth;
-    document.getElementById("currentFiat").innerHTML = currentFiat;
-    document.getElementById("holdingBTC").innerHTML = holdingBTC;
-    document.getElementById("holdingBTCWorth").innerHTML = holdingBTC*currentPrice;
-    document.getElementById("sortedHoldingBTC").innerHTML = sortedHoldingBTC;
-    document.getElementById("sortedHoldingBTCWorth").innerHTML = sortedHoldingWorthNow;
+    document.getElementById("totalWorth").innerHTML = totalWorth.toFixed(2);
+    document.getElementById("currentFiat").innerHTML = currentFiat.toFixed(2);
+    document.getElementById("holdingBTC").innerHTML = holdingBTC.toFixed(8);
+    document.getElementById("holdingBTCWorth").innerHTML = (holdingBTC*currentPrice).toFixed(4);
+    document.getElementById("sortedHoldingBTC").innerHTML = sortedHoldingBTC.toFixed(8);
+    document.getElementById("sortedHoldingBTCWorth").innerHTML = sortedHoldingWorthNow.toFixed(4);
 
 });
