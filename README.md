@@ -15,3 +15,7 @@ The Website uses the MERN stack.
 3. Write in the terminal `npm install` to install the dependencies 
 
 4. Write in the terminal `node app`, to start. Now go to the site `localhost:8080`.
+
+## Screenshot
+
+![alt text](https://drive.google.com/file/d/1jJCkiP2LKXcXEsyHO3DwunJjeDDexoqa/view?usp=sharing)
