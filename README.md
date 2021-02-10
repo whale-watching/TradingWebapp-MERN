@@ -18,4 +18,4 @@ The Website uses the MERN stack.
 
 ## Screenshot
 
-![alt text](https://drive.google.com/file/d/1jJCkiP2LKXcXEsyHO3DwunJjeDDexoqa/view?usp=sharing)
+![alt text](https://i.imgur.com/hpixz3t.png)
