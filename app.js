@@ -2,13 +2,20 @@ var express = require('express');
 var bodyParser = require('body-parser');
 const WebSocket = require('ws');
 
-
 // importing user modules
 var orderUtil = require('./orderUtil.js');
 var mongoUtil = require('./mongoUtil.js');
 var miscUtil = require('./miscUtil.js');
 var coincapApiUtil = require('./coincapApiUtil.js');
-var display = require('./display.js');
+
+
+
+var port = 8080;
+var app = express();
+const server = app.listen(port, () => {
+    console.log("Listening on port: " + port);
+});
+const io = require('socket.io')(server);
 
 
 const userId = 1;
@@ -22,10 +29,9 @@ mongoUtil.updateUserdataToDb(jsonUserData);
 
 orderUtil.updateOrders(); // check if previous orders was completed, updates the current Amt accordingly
 coincapApiUtil.startWebsocket(); // keeps listening, helps to get current price synchronously
-display.displayOrders(); // shows all order present in the database
+var sendPastOrder = require('./sendPastOrders.js')(io); // it sends order to frontend using websocket
 
 
-var app = express();
 var urlencodedParser = bodyParser.urlencoded({ extended: true })
 // this will be run when submit is clicked, i.e any order inserted
 app.post('/formData', urlencodedParser, function (req, res) {
@@ -44,7 +50,7 @@ app.post('/formData', urlencodedParser, function (req, res) {
         console.log(jsonData);
 
         mongoUtil.addOrderToDb(jsonData);
-        display.displayOrders();
+        var sendPastOrder = require('./sendPastOrders.js')(io); // it sends order to frontend using websocket
 
         var currentPrice = coincapApiUtil.getCurrentPrice();
         console.log("current price when trade happened ", coincapApiUtil.getCurrentPrice());
@@ -78,13 +84,6 @@ app.post('/formData', urlencodedParser, function (req, res) {
     res.end();
 });
 
-
-var port = 8080;
-
-const server = app.listen(port, () => {
-    console.log("Listening on port: " + port);
-});
-const io = require('socket.io')(server);
 
 
 // when socket is connected start sending current price and other userMetadata to frontend

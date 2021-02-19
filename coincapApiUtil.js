@@ -1,4 +1,3 @@
-var display = require('./display.js');
 const WebSocket = require('ws');
 
 var currentPrice;
