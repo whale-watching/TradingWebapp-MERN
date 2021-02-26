@@ -57,7 +57,7 @@ app.post('/formData', urlencodedParser, function (req, res) {
 
         // TODO: these  tradde decisions should be made in orderutil.js, buybelow/buyAbove 
         //      should have their decision and only then order is placed and current cash is reduced. 
-        var buyAmtIds = ['buyNowAmt', 'buyBelowAmt', 'buyAboveAmt'];
+        var buyAmtIds = ['buyNowAmt', 'buyAtAmt'];
         for(let i=0; i<buyAmtIds.length; i++) {
             if(buyAmtIds[i] in jsonData){
                 currentFiat-= jsonData[buyAmtIds[i]];
@@ -68,7 +68,7 @@ app.post('/formData', urlencodedParser, function (req, res) {
             }
         }
         // TODO: if found in above buyAmt then skip below
-        var sortAmtIds = ['sortNowAmt', 'sortBelowAmt', 'sortAboveAmt'];
+        var sortAmtIds = ['sortNowAmt', 'sortAtAmt'];
         for(let i=0; i<sortAmtIds.length; i++) {
             if(sortAmtIds[i] in jsonData){
                 currentFiat-= jsonData[sortAmtIds[i]];

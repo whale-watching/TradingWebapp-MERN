@@ -74,18 +74,10 @@
           </form>
 
           <form class="orderForm" method="post" action="/formData" target="hiddenFrame">
-            <label>Buy when price below:</label>
-            <input type="number" id="buyBelow" name="buyBelow">
+            <label>Buy when price At:</label>
+            <input type="number" id="buyAt" name="buyAt">
             <label>Buy amt :</label>
-            <input type="number" id="buyBelowAmt" name="buyBelowAmt">
-            <input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
-          </form>
-
-          <form method="post" action="/formData" target="hiddenFrame">
-          <label>Buy when price reach:</label>
-            <input type="number" id="buyAbove" name="buyAbove">
-            <label>Buy amt :</label>
-            <input type="number" id="buyAboveAmt" name="buyAboveAmt">
+            <input type="number" id="buyAtAmt" name="buyAtAmt">
             <input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
           </form>
 
@@ -102,26 +94,22 @@
           </form>
 
           <form method="post" action="/formData" target="hiddenFrame">
-          <label>Sort when price below:</label>
-            <input type="number" id="sortBelow" name="sortBelow">
+          <label>Sort when price touch:</label>
+            <input type="number" id="sortAt" name="sortAt">
             <label>Sort amt :</label>
-            <input type="number" id="sortBelowAmt" name="sortBelowAmt">
+            <input type="number" id="sortAtAmt" name="sortAtAmt">
             <input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
           </form>
 
-          <form method="post" action="/formData" target="hiddenFrame">
-          <label>Sort when price above:</label>
-            <input type="number" id="sortAbove" name="sortAbove">
-            <label>Sort amt :</label>
-            <input type="number" id="sortAboveAmt" name="sortAboveAmt">
-            <input type="button" value="Submit" onclick="this.form.submit(); this.form.reset()">
-          </form>
         </div>
 
       </div>
 
-      <div id="pendingOrder">
-      <h1>Past orders are as folllow </h1>
+      <div id="pastOrder">
+
+        <h1>Past orders are as folllow </h1>
+
+        <div id = "pastOrderTable"></div>
       </div>
 
 
