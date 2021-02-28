@@ -1,5 +1,5 @@
 var socket = io('http://localhost:8080');
-socket.on('connect', function(){ console.log('connected to socket'); }); 
+// socket.on('connect', function(){ console.log('connected to socket'); }); 
 
 socket.on('userMetadata', function(userMetadata) {
 

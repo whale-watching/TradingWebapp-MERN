@@ -84,6 +84,11 @@ app.post('/formData', urlencodedParser, function (req, res) {
     res.end();
 });
 
+app.post('/resetBtn', function (req, res) {
+    console.log("reset button pressed");
+    mongoUtil.resetPastOrders();
+    res.end();
+});
 
 
 // when socket is connected start sending current price and other userMetadata to frontend
@@ -92,19 +97,18 @@ io.on('connection', (socket) => {
     
     var websocketURL = 'wss://ws.coincap.io/prices?assets=bitcoin';
     const ws = new WebSocket(websocketURL);
+
     ws.onerror = function(event) {
         console.error("WebSocket error observed ;(");
     };
+
     ws.on('message', function incoming(data) {
         var currentPriceJson = JSON.parse(data);
-        // console.log(typeof(currentPriceJson));
+        console.log("going ", currentPriceJson);
         let userMetadata = {"currentPrice": currentPriceJson, "currentFiat": currentFiat, holdings, sortedHoldings};
         io.emit("userMetadata", userMetadata);
-        // console.log(userMetadata);
     });
-    socket.on('disconnect', () => {
-        console.log(`Socket disconnected.`);
-    });
+
 });
 
 // send/load html and javascript something 

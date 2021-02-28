@@ -6,7 +6,10 @@ var currentPrice;
 function startWebsocket() {
     const ws = new WebSocket('wss://ws.coincap.io/prices?assets=bitcoin');
     ws.onerror = function(event) {
-        console.error("WebSocket error observed ;(");
+        console.error("WebSocket error observed in coincap trying to restart in 1s");
+        setTimeout(function() {
+            startWebsocket();
+        }, 1000);      
     };
     ws.on('message', function incoming(data) {
         currentPrice = JSON.parse(data)["bitcoin"];

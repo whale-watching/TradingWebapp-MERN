@@ -56,9 +56,23 @@ function addOrderToDb(jsonData) {
     });
 }
 
+function resetPastOrders() {
+
+    MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) {
+        if (err) throw err;
+        var dbo = db.db("mainDb");
+        dbo.collection("allOrders").drop(function(err, delOK) {
+            if (err) throw err;
+            if (delOK) console.log("Past Orders deleted");
+            db.close();
+        });
+    });
+}
+
 
 
 module.exports = {
     updateUserdataToDb: updateUserdataToDb,
     addOrderToDb: addOrderToDb,
+    resetPastOrders: resetPastOrders
 };
