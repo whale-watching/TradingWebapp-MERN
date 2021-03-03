@@ -57,7 +57,7 @@ fetchUserMetaData();
 
 orderUtil.updateOrders(); // check if previous orders was completed, updates the current Amt accordingly
 coincapApiUtil.startWebsocket(); // keeps listening, helps to get current price synchronously
-var sendPastOrder = require('./sendPastOrders.js')(io); // it sends order to frontend using websocket
+mongoUtil.sendPastOrders(io); // it sends order to frontend using socket.io
 
 
 var urlencodedParser = bodyParser.urlencoded({ extended: true })
@@ -78,7 +78,7 @@ app.post('/formData', urlencodedParser, function (req, res) {
         console.log(jsonData);
 
         mongoUtil.addOrderToDb(jsonData);
-        var sendPastOrder = require('./sendPastOrders.js')(io); // it sends order to frontend using websocket
+        mongoUtil.sendPastOrders(io); // it sends order to frontend using socket.io
 
         var currentPrice = coincapApiUtil.getCurrentPrice();
         console.log("current price when trade happened ", coincapApiUtil.getCurrentPrice());
