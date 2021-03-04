@@ -3,9 +3,9 @@ var mongoUtil = require("./mongoUtil.js")
 var coincapApiUtil = require("./coincapApiUtil.js")
 
 // function to update the past orders in the database if they are completed, using coincap APIs
-// also updates userMetaData
+// also updates userData
 
-function updateOrders(orderData, userMetaData, io) {
+function updateOrders(orderData, userData, io) {
 
     // console.log(orderData);
 
@@ -20,10 +20,10 @@ function updateOrders(orderData, userMetaData, io) {
     var buyAmtIds = ['buyNowAmt', 'buyAtAmt'];
     for(let i=0; i<buyAmtIds.length; i++) {
         if(buyAmtIds[i] in orderData){
-            userMetaData["currentFiat"] -= orderData[buyAmtIds[i]];
-            userMetaData["holdings"]["BTCUSD"] += orderData[buyAmtIds[i]]/currentPrice;
-            console.log("current cash changed to ", userMetaData["currentFiat"]);
-            console.log("new btc holding ", userMetaData["holdings"]["BTCUSD"]);
+            userData["currentFiat"] -= orderData[buyAmtIds[i]];
+            userData["holdings"]["BTCUSD"] += orderData[buyAmtIds[i]]/currentPrice;
+            console.log("current cash changed to ", userData["currentFiat"]);
+            console.log("new btc holding ", userData["holdings"]["BTCUSD"]);
             break;
         }
     }
@@ -31,17 +31,17 @@ function updateOrders(orderData, userMetaData, io) {
     var sortAmtIds = ['sortNowAmt', 'sortAtAmt'];
     for(let i=0; i<sortAmtIds.length; i++) {
         if(sortAmtIds[i] in orderData){
-            userMetaData["currentFiat"]-= orderData[sortAmtIds[i]];
+            userData["currentFiat"]-= orderData[sortAmtIds[i]];
             let temp = [orderData[sortAmtIds[i]]/currentPrice, currentPrice];
             console.log(temp);
-            userMetaData["sortedHoldings"]["BTCUSD"].push(temp);
-            console.log("current cash changed to ", userMetaData["currentFiat"]);
+            userData["sortedHoldings"]["BTCUSD"].push(temp);
+            console.log("current cash changed to ", userData["currentFiat"]);
             console.log("new sorted btc holding ", orderData[sortAmtIds[i]]/currentPrice);
             break;
         }
     }
 
-    mongoUtil.updateUserdataToDb(userMetaData);
+    mongoUtil.updateUserdataToDb(userData);
 }
 
 module.exports = {

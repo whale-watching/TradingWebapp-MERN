@@ -25,11 +25,11 @@ const userId = 1;
 var currentFiat = 1000;
 var holdings = {"BTCUSD": 0};  // stores the value in its respective coin not in dollars
 var sortedHoldings = {"BTCUSD": []};  // shortedHolding stores the amt of BTC and also the price when trade happened
-var defaultUserMetaData = {"userId":userId, "currentFiat":currentFiat, "holdings":holdings, "sortedHoldings": sortedHoldings};
+var defaultUserData = {"userId":userId, "currentFiat":currentFiat, "holdings":holdings, "sortedHoldings": sortedHoldings};
 
 
-var userMetaData;
-async function fetchUserMetaData() {
+var userData;
+async function fetchUserData() {
     const client = await MongoClient.connect(mongoDbUrl, { 
         useNewUrlParser: true, 
         useUnifiedTopology: true,
@@ -39,21 +39,21 @@ async function fetchUserMetaData() {
     const items = await db.collection('userData').find({userId : userId}).toArray();
     // if user already exists
     if(items.length) {
-        userMetaData = items[0];
+        userData = items[0];
     }
 
     else {
-        userMetaData = defaultUserMetaData;
-        mongoUtil.updateUserdataToDb(userMetaData);
+        userData = defaultUserData;
+        mongoUtil.updateUserdataToDb(userData);
     }
-    console.log("user data are ", userMetaData);
+    console.log("user data are ", userData);
 
-    // start sending data to frontend only after we have got the userMetaData from DB
+    // start sending data to frontend only after we have got the userData from DB
     sendUserData();
 
     client.close();
 }
-fetchUserMetaData();
+fetchUserData();
 
 
 
@@ -75,7 +75,7 @@ app.post('/formData', urlencodedParser, function (req, res) {
     
     else {
         let orderData = miscUtil.addMetaData(req.body, userId);
-        orderUtil.updateOrders(orderData, userMetaData, io);
+        orderUtil.updateOrders(orderData, userData, io);
     }
     
     res.end();
@@ -83,15 +83,15 @@ app.post('/formData', urlencodedParser, function (req, res) {
 
 app.post('/resetBtn', function (req, res) {
     console.log("userMataData and pastOrders were updated to default");
-    userMetaData = defaultUserMetaData;
-    mongoUtil.updateUserdataToDb(userMetaData);
+    userData = defaultUserData;
+    mongoUtil.updateUserdataToDb(userData);
     mongoUtil.deletePastOrders();
     res.end();
 });
 
 
 function sendUserData() {
-    // when socket is connected start sending current price and userMetadata to frontend
+    // when socket is connected start sending current price and userData to frontend
     io.on('connection', (socket) => {
         console.log('a user connected');
         
@@ -105,9 +105,9 @@ function sendUserData() {
         ws.on('message', function incoming(data) {
             var currentPriceJson = JSON.parse(data);
             // console.log("going ", currentPriceJson);
-            let tempUserData = JSON.parse(JSON.stringify(userMetaData));
+            let tempUserData = JSON.parse(JSON.stringify(userData));
             tempUserData["currentPrice"] = currentPriceJson;
-            io.emit("userMetadata", tempUserData);
+            io.emit("userData", tempUserData);
         });
         
     });

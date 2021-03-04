@@ -1,18 +1,18 @@
 var socket = io('http://localhost:8080');
 // socket.on('connect', function(){ console.log('connected to socket'); }); 
 
-socket.on('userMetadata', function(userMetadata) {
+socket.on('userData', function(userData) {
 
-    var currentFiat = userMetadata["currentFiat"];
-    var holdingBTC = userMetadata["holdings"]["BTCUSD"];
-    var currentPrice = userMetadata["currentPrice"]["bitcoin"];
+    var currentFiat = userData["currentFiat"];
+    var holdingBTC = userData["holdings"]["BTCUSD"];
+    var currentPrice = userData["currentPrice"]["bitcoin"];
 
     var sortedHoldingBTC = 0;
     var sortedHoldingWorth = 0;
     // itterate through all sortred orders
-    for(let i=0; i<userMetadata["sortedHoldings"]["BTCUSD"].length; i++) {
-        let tempValue = userMetadata["sortedHoldings"]["BTCUSD"][i][0]; // amt bought then
-        let tempPriceStr = userMetadata["sortedHoldings"]["BTCUSD"][i][1]; // price at sort buy then
+    for(let i=0; i<userData["sortedHoldings"]["BTCUSD"].length; i++) {
+        let tempValue = userData["sortedHoldings"]["BTCUSD"][i][0]; // amt bought then
+        let tempPriceStr = userData["sortedHoldings"]["BTCUSD"][i][1]; // price at sort buy then
         let tempPrice = parseFloat(tempPriceStr);
 
         sortedHoldingBTC += tempValue; // total sorted holding

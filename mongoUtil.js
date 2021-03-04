@@ -9,7 +9,7 @@ function updateUserdataToDb(jsonData) {
         var dbo = db.db("mainDb");
         dbo.collection("userData").updateOne({"userId": jsonData["userId"]}, newValues, {upsert: true}, function(err, res) {
             if (err) throw err;
-            console.log("UserMetadata updated to ", jsonData);
+            console.log("userData updated to ", jsonData);
             db.close();
         });
     }); 
