@@ -10,8 +10,6 @@ var mongoUtil = require('./mongoUtil.js');
 var miscUtil = require('./miscUtil.js');
 var coincapApiUtil = require('./coincapApiUtil.js');
 
-const userId = 1;
-
 
 var port = 8080;
 var app = express();
@@ -20,6 +18,14 @@ const server = app.listen(port, () => {
 });
 const io = require('socket.io')(server);
 
+
+// there is only 1 user for now
+const userId = 1;
+
+var currentFiat = 1000;
+var holdings = {"BTCUSD": 0};  // stores the value in its respective coin not in dollars
+var sortedHoldings = {"BTCUSD": []};  // shortedHolding stores the amt of BTC and also the price when trade happened
+var defaultUserMetaData = {"userId":userId, "currentFiat":currentFiat, "holdings":holdings, "sortedHoldings": sortedHoldings};
 
 
 var userMetaData;
@@ -37,11 +43,7 @@ async function fetchUserMetaData() {
     }
 
     else {
-        var currentFiat = 1000;
-        var holdings = {"BTCUSD": 0};  // stores the value in its respective coin not in dollars
-        var sortedHoldings = {"BTCUSD": []};  // shortedHolding stores the amt of BTC and also the price when trade happened
-        userMetaData = {"userId":userId, "currentFiat":currentFiat, "holdings":holdings, "sortedHoldings": sortedHoldings};
-
+        userMetaData = defaultUserMetaData;
         mongoUtil.updateUserdataToDb(userMetaData);
     }
     console.log("user data are ", userMetaData);
@@ -55,7 +57,7 @@ fetchUserMetaData();
 
 
 
-orderUtil.updateOrders(); // check if previous orders was completed, updates the current Amt accordingly
+// orderUtil.updateOrders(); // check if previous orders was completed, updates the current Amt accordingly
 coincapApiUtil.startWebsocket(); // keeps listening, helps to get current price synchronously
 mongoUtil.sendPastOrders(io); // it sends order to frontend using socket.io
 
@@ -72,52 +74,18 @@ app.post('/formData', urlencodedParser, function (req, res) {
     }
     
     else {
-        // jsonData i.e the order json
-        var jsonData = miscUtil.addMetaData(req.body, userId);
-
-        console.log(jsonData);
-
-        mongoUtil.addOrderToDb(jsonData);
-        mongoUtil.sendPastOrders(io); // it sends order to frontend using socket.io
-
-        var currentPrice = coincapApiUtil.getCurrentPrice();
-        console.log("current price when trade happened ", coincapApiUtil.getCurrentPrice());
-
-        // TODO: these  tradde decisions should be made in orderutil.js, buybelow/buyAbove 
-        //      should have their decision and only then order is placed and current cash is reduced. 
-        var buyAmtIds = ['buyNowAmt', 'buyAtAmt'];
-        for(let i=0; i<buyAmtIds.length; i++) {
-            if(buyAmtIds[i] in jsonData){
-                userMetaData["currentFiat"] -= jsonData[buyAmtIds[i]];
-                userMetaData["holdings"]["BTCUSD"] += jsonData[buyAmtIds[i]]/currentPrice;
-                console.log("current cash changed to ", userMetaData["currentFiat"]);
-                console.log("new btc holding ", userMetaData["holdings"]["BTCUSD"]);
-                break;
-            }
-        }
-        // TODO: if found in above buyAmt then skip below
-        var sortAmtIds = ['sortNowAmt', 'sortAtAmt'];
-        for(let i=0; i<sortAmtIds.length; i++) {
-            if(sortAmtIds[i] in jsonData){
-                userMetaData["currentFiat"]-= jsonData[sortAmtIds[i]];
-                let temp = [jsonData[sortAmtIds[i]]/currentPrice, currentPrice];
-                console.log(temp);
-                userMetaData["sortedHoldings"]["BTCUSD"].push(temp);
-                console.log("current cash changed to ", userMetaData["currentFiat"]);
-                console.log("new sorted btc holding ", jsonData[sortAmtIds[i]]/currentPrice);
-                break;
-            }
-        }
-
-        mongoUtil.updateUserdataToDb(userMetaData);
+        let orderData = miscUtil.addMetaData(req.body, userId);
+        orderUtil.updateOrders(orderData, userMetaData, io);
     }
     
     res.end();
 });
 
 app.post('/resetBtn', function (req, res) {
-    console.log("reset button pressed");
-    mongoUtil.resetPastOrders();
+    console.log("userMataData and pastOrders were updated to default");
+    userMetaData = defaultUserMetaData;
+    mongoUtil.updateUserdataToDb(userMetaData);
+    mongoUtil.deletePastOrders();
     res.end();
 });
 
@@ -137,9 +105,9 @@ function sendUserData() {
         ws.on('message', function incoming(data) {
             var currentPriceJson = JSON.parse(data);
             // console.log("going ", currentPriceJson);
-            let userData = JSON.parse(JSON.stringify(userMetaData));
-            userData["currentPrice"] = currentPriceJson;
-            io.emit("userMetadata", userData);
+            let tempUserData = JSON.parse(JSON.stringify(userMetaData));
+            tempUserData["currentPrice"] = currentPriceJson;
+            io.emit("userMetadata", tempUserData);
         });
         
     });
