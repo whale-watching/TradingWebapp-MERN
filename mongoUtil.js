@@ -15,16 +15,20 @@ function updateUserdataToDb(jsonData) {
     }); 
 }
 
-function addOrderToDb(jsonData) {
-    MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) {
-        if (err) throw err;
-        var dbo = db.db("mainDb");
-        dbo.collection("allOrders").insertOne(jsonData, function(err, res) {
-            if (err) throw err;
-            console.log("inserted order to db success");
-            db.close();
-        });
+
+async function addOrderToDb(jsonData) {
+
+    const client = await MongoClient.connect(url, { 
+        useNewUrlParser: true, 
+        useUnifiedTopology: true,
     });
+    const db = client.db('mainDb');
+    const ok = await db.collection("allOrders").insertOne(jsonData);
+
+    if(ok)
+        console.log("inserted order to db success");
+
+    client.close();
 }
 
 async function deletePastOrders() {
@@ -51,11 +55,10 @@ function sendPastOrders(io){
         var dbo = db.db("mainDb");
         dbo.collection("allOrders").find({}).toArray(function(err, result) {
             if (err) throw err;
-            // console.log(result); //all orders
-            io.sockets.on('connection', function (socket) {
-                console.log("sent Past order history to frontend");
-                io.emit("pastOrders", result);
-            });
+
+            // console.log('sending', result); //all orders
+            io.emit("pastOrders", result);
+
             db.close();
         });
     });

@@ -18,6 +18,12 @@ const server = app.listen(port, () => {
 });
 const io = require('socket.io')(server);
 
+io.on('connection', (socket) => {
+    console.log('A user is connected');
+
+    mongoUtil.sendPastOrders(io); // it sends past orders to frontend using socket.io
+    sendUserData();
+});
 
 // there is only 1 user for now
 const userId = 1;
@@ -48,9 +54,6 @@ async function fetchUserData() {
     }
     console.log("user data are ", userData);
 
-    // start sending data to frontend only after we have got the userData from DB
-    sendUserData();
-
     client.close();
 }
 fetchUserData();
@@ -59,11 +62,10 @@ fetchUserData();
 
 // orderUtil.updateOrders(); // check if previous orders was completed, updates the current Amt accordingly
 coincapApiUtil.startWebsocket(); // keeps listening, helps to get current price synchronously
-mongoUtil.sendPastOrders(io); // it sends order to frontend using socket.io
 
 
-var urlencodedParser = bodyParser.urlencoded({ extended: true })
 // this will be run when submit is clicked, i.e any order inserted
+var urlencodedParser = bodyParser.urlencoded({ extended: true })
 app.post('/formData', urlencodedParser, function (req, res) {
 
     // websocket is still loading so dont take any order
@@ -74,42 +76,50 @@ app.post('/formData', urlencodedParser, function (req, res) {
     }
     
     else {
-        let orderData = miscUtil.addMetaData(req.body, userId);
-        orderUtil.updateOrders(orderData, userData, io);
+        async function foo() {
+            let orderData = miscUtil.addMetaOrderData(req.body, userId);
+            orderUtil.executeOrders(orderData, userData);
+            await mongoUtil.addOrderToDb(orderData); // await for the orders to be inserted to DB only then send them to frontend
+            mongoUtil.sendPastOrders(io);
+        }
+        foo();
+
     }
     
     res.end();
 });
 
 app.post('/resetBtn', function (req, res) {
-    console.log("userMataData and pastOrders were updated to default");
-    userData = defaultUserData;
-    mongoUtil.updateUserdataToDb(userData);
-    mongoUtil.deletePastOrders();
+    async function foo() {
+        console.log("userMataData and pastOrders were updated to default");
+        userData = defaultUserData;
+        mongoUtil.updateUserdataToDb(userData);
+        await mongoUtil.deletePastOrders(); // await for the pastOrders to be deleted only then send it to frontend 
+        mongoUtil.sendPastOrders(io);
+    }
+    foo();
     res.end();
 });
 
 
 function sendUserData() {
-    // when socket is connected start sending current price and userData to frontend
-    io.on('connection', (socket) => {
-        console.log('a user connected');
-        
-        var websocketURL = 'wss://ws.coincap.io/prices?assets=bitcoin';
-        const ws = new WebSocket(websocketURL);
+    
+    // connect to websocket which sends current price
+    // whenever received, send it to frontend using socket.io
 
-        ws.onerror = function(event) {
-            console.error("WebSocket error observed ;(");
-        };
+    var websocketURL = 'wss://ws.coincap.io/prices?assets=bitcoin';
+    const ws = new WebSocket(websocketURL);
 
-        ws.on('message', function incoming(data) {
-            var currentPriceJson = JSON.parse(data);
-            // console.log("going ", currentPriceJson);
-            let tempUserData = JSON.parse(JSON.stringify(userData));
-            tempUserData["currentPrice"] = currentPriceJson;
-            io.emit("userData", tempUserData);
-        });
-        
+    ws.onerror = function(event) {
+        console.error("WebSocket error observed ;(");
+    };
+
+    ws.on('message', function incoming(data) {
+        var currentPriceJson = JSON.parse(data);
+        // console.log("going ", currentPriceJson);
+        let tempUserData = JSON.parse(JSON.stringify(userData));
+        tempUserData["currentPrice"] = currentPriceJson;
+        io.emit("userData", tempUserData);
     });
 }
 

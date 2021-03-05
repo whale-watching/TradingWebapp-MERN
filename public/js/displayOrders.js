@@ -6,8 +6,8 @@ function showPastOrdersHtml() {
 }
 
 socket.on('pastOrders', function(pastOrders) {
-    // console.log("got past orders ");
-    console.log(pastOrders);
+    console.log("got past orders");
+    console.table(pastOrders);
 
 
 });

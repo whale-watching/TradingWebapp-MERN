@@ -5,27 +5,26 @@ var coincapApiUtil = require("./coincapApiUtil.js")
 // function to update the past orders in the database if they are completed, using coincap APIs
 // also updates userData
 
-function updateOrders(orderData, userData, io) {
+function executeOrders(orderData, userData) {
 
     // console.log(orderData);
-
-    mongoUtil.addOrderToDb(orderData);
-    mongoUtil.sendPastOrders(io); // it sends all past orders to frontend using socket.io
 
     var currentPrice = coincapApiUtil.getCurrentPrice();
     console.log("current price when trade happened ", coincapApiUtil.getCurrentPrice());
 
     // buy now
-    if('buyNowAmt' in orderData){
+    if('buyNowAmt' in orderData) {
         var tempAmt = orderData['buyNowAmt'];
         userData["currentFiat"] -= tempAmt;
         userData["holdings"]["BTCUSD"] += tempAmt/currentPrice;
         console.log("current cash changed to ", userData["currentFiat"]);
-        console.log("new btc holding ", userData["holdings"]["BTCUSD"]);        
+        console.log("new btc holding ", userData["holdings"]["BTCUSD"]);
+        
+        orderData["orderCompleted"] = true;
     }
 
     // sort now
-    if('sortNowAmt' in orderData){
+    if('sortNowAmt' in orderData) {
         var tempAmt = orderData['sortNowAmt'];
         userData["currentFiat"]-= tempAmt;
         let temp = [tempAmt/currentPrice, currentPrice];
@@ -33,11 +32,13 @@ function updateOrders(orderData, userData, io) {
         userData["sortedHoldings"]["BTCUSD"].push(temp);
         console.log("current cash changed to ", userData["currentFiat"]);
         console.log("new sorted btc holding ", tempAmt/currentPrice);
+
+        orderData["orderCompleted"] = true;
     }
 
     mongoUtil.updateUserdataToDb(userData);
 }
 
 module.exports = {
-    updateOrders: updateOrders,
+    executeOrders: executeOrders,
 };

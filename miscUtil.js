@@ -1,7 +1,7 @@
 var coincapApiUtil = require("./coincapApiUtil.js");
 
 // this fucntion runs when we are finally taking the order, so getCurrentPrice() is not undifined then
-function addMetaData(jsonData, userId, currentAmt) {
+function addMetaOrderData(jsonData, userId, currentAmt) {
     // adding metaData
     jsonData["userId"] = userId;
     jsonData["orderCompleted"] = false;
@@ -12,5 +12,5 @@ function addMetaData(jsonData, userId, currentAmt) {
 }
 
 module.exports = {
-    addMetaData: addMetaData,
+    addMetaOrderData: addMetaOrderData,
 };
