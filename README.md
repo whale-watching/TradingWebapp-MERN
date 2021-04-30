@@ -3,7 +3,7 @@ A GUI based **programmable** stock/crypto trading interface. You can program whe
 
 
 ## Tech-stack
-The Website uses the MERN stack.
+Node, Express, MongoDB, HTML, CSS, JS
 
 
 ## How to use (local)?
