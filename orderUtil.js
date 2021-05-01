@@ -41,7 +41,7 @@ function executeOrders(orderData, userData) {
 
     // if buyAtAmt and sortAtAmt call updatePrevioudOrders
     else if('buyAtAmt' in orderData || 'sortAtAmt' in orderData) {
-        updatePreviousOrders(); // can be called cause of hoisting
+        // updatePreviousOrders(); // can be called cause of hoisting
     }
 
     mongoUtil.updateUserdataToDb(userData);
