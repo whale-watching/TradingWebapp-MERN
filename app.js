@@ -77,9 +77,9 @@ app.post('/formData', urlencodedParser, function (req, res) {
     
     else {
         async function foo() {
-            let orderData = miscUtil.addMetaOrderData(req.body, userId);
-            orderUtil.executeOrders(orderData, userData);
-            await mongoUtil.addOrderToDb(orderData); // await for the orders to be inserted to DB only then send them to frontend
+            let CurrentOrderData = miscUtil.addMetaOrderData(req.body, userId);
+            await mongoUtil.addOrderToDb(CurrentOrderData); // await for the orders to be inserted to DB only then send them to frontend
+            orderUtil.executeOrders(CurrentOrderData, userData); // execute as in reduce the current cash by amt bought, and the orders status
             mongoUtil.sendPastOrders(io);
         }
         foo();
@@ -117,7 +117,7 @@ function sendUserData() {
     ws.on('message', function incoming(data) {
         var currentPriceJson = JSON.parse(data);
         // console.log("going ", currentPriceJson);
-        let tempUserData = JSON.parse(JSON.stringify(userData));
+        let tempUserData = JSON.parse(JSON.stringify(userData)); // copying userData to tempUserData
         tempUserData["currentPrice"] = currentPriceJson;
         io.emit("userData", tempUserData);
     });
