@@ -34,8 +34,9 @@ var sortedHoldings = {"BTCUSD": []};  // shortedHolding stores the amt of BTC an
 var defaultUserData = {"userId":userId, "currentFiat":currentFiat, "holdings":holdings, "sortedHoldings": sortedHoldings};
 
 
-var userData;
+var userData = {};
 async function fetchUserData() {
+    console.log("started fetching");
     const client = await MongoClient.connect(mongoDbUrl, { 
         useNewUrlParser: true, 
         useUnifiedTopology: true,
@@ -115,6 +116,7 @@ function sendUserData() {
     };
 
     ws.on('message', function incoming(data) {
+        // console.log(userData);
         var currentPriceJson = JSON.parse(data);
         // console.log("going ", currentPriceJson);
         let tempUserData = JSON.parse(JSON.stringify(userData)); // copying userData to tempUserData
@@ -124,7 +126,7 @@ function sendUserData() {
 }
 
 // send/load html and javascript something 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/client'));
 app.get('/', function(req, res) {
     res.redirect('index.html');
 });

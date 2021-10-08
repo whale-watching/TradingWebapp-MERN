@@ -8,7 +8,7 @@ Node, Express, MongoDB, HTML, CSS, JS
 
 ## How to use (local)?
 
-1. Install [node](https://nodejs.org/en/download/) and [MongoDB server](https://www.mongodb.com/try/download/community)
+1. Install [node](https://nodejs.org/en/download/) and [MongoDB server](https://www.mongodb.com/try/download/community). Manually [start mongod](https://stackoverflow.com/questions/46523321/mongoerror-connect-econnrefused-127-0-0-127017) if there is problem with Db connection.
 
 2. Open terminal and navigate to the path of the project. If using VS code just open the project folder and then terminal.
 
