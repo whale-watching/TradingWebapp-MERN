@@ -6,16 +6,16 @@ A GUI based **programmable** stock/crypto trading interface. You can program whe
 Node, Express, MongoDB, HTML, CSS, JS
 
 
-## How to use (local)?
+## How to use for first time(local)?
 
 1. Install [node](https://nodejs.org/en/download/) and [MongoDB server](https://www.mongodb.com/try/download/community). Manually [start mongod](https://stackoverflow.com/questions/46523321/mongoerror-connect-econnrefused-127-0-0-127017) if there is problem with Db connection.
 
-2. Open terminal and navigate to the path of the project. If using VS code just open the project folder and then terminal.
+2. Open terminal and navigate to the server folder. Write `npm install` to install the dependencies 
 
-3. Write in the terminal `npm install` to install the dependencies 
+4. Open terminal and navigate to the server folder. Write in the terminal `npm install` to install the dependencies 
 
-4. Write in the terminal `node app`, to start. Now go to the site `localhost:8080`.
+6. In the server folder run `npm start`. The frontend will run on port `3000`, the backend runs on the port `8000`.
 
-## Screenshot
+<!-- ## Screenshot
 
-![alt text](https://i.imgur.com/hpixz3t.png)
+![alt text](https://i.imgur.com/hpixz3t.png) -->
