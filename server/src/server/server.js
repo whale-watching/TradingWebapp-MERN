@@ -1,15 +1,14 @@
 const express = require("express");
+const routes = require("../../routes");
 
 // init everything
 const start = () => {
 
     const app = express();
 
-    app.get("/", function(req, res) {
-        res.send("It's working!");
-    });
+    routes.init(app);
     
-    app.listen(8000, () => {
+    const server = app.listen(8000, () => {
         console.log("app listening on port 8000");
     });
 }
