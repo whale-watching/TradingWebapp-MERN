@@ -17,17 +17,16 @@ export default class Home extends Component {
 
         // update the state if present in local storage
 
-        // else create a userId and save to local storage
+        // else create a userId and save state to local storage
 
 
-        // this.listenToUpdatedPriceWs();
     }
 
 
 
     componentDidMount() {
 
-
+        this.listenToUpdatedPriceWs();
     }
 
 
