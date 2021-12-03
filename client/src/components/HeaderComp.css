@@ -1,0 +1,9 @@
+.HeaderComp {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3vh;
+  background-color: rgb(23, 23, 37);
+  color: #fff;
+}

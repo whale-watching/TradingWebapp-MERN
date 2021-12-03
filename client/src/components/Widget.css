@@ -1,0 +1,7 @@
+.widget-class {
+  max-width: 60%;
+  margin: 2rem 1.5rem;
+  display: flex;
+  flex-direction: start;
+  height: 50%;
+}

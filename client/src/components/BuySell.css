@@ -1,0 +1,40 @@
+.BuySell-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.Dropdown {
+  width: 60%;
+  margin-bottom: 10%;
+  margin-top: 10%;
+}
+
+.button {
+  color: white;
+  text-decoration: none;
+  border: none;
+  padding: 18px 70px;
+  margin: 0px -45px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5px;
+}
+.green-button {
+  background-color: #4caf50;
+}
+.red-button {
+  background-color: red;
+}
+
+.button-row {
+  width: inherit;
+  padding: 2rem 1.5rem 2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: space-evenly;
+}
