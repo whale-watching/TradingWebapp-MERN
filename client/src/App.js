@@ -1,14 +1,19 @@
-import logo from './logo.svg';
+import React from 'react';
+import HeaderComp from './components/HeaderComp'
+import Widget from './components/Widget'
+import BuySell from './components/BuySell'
 import './App.css';
-
-import Home from './components/Home/Home';
 
 
 function App() {
+
   return (
     <div className="App">
-      
-      <Home></Home>
+      <HeaderComp />
+      <div className="Content">
+      <Widget />
+      <BuySell />
+      </div>
     </div>
   );
 }
