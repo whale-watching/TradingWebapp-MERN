@@ -4,7 +4,7 @@ const { user } = require("../src/api");
 
 router.post("/login", user.login);
 router.post("/logout", user.logout);
-router.put("/register", user.register);
+router.post("/register", user.register);
 
 router.post("/updateUserDetails", user.updateUserDetails); // Guest user registers
 
