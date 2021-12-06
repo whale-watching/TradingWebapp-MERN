@@ -14,7 +14,10 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
 
-export default function BuySell() {
+export default function BuySell(props) {
+
+  console.log("props in buy sell", props);
+  // access balance by props.balance
 
     const [coin, setCoin] = React.useState('');
     const handleChange = (event) => {
@@ -55,7 +58,7 @@ export default function BuySell() {
             <MonetizationOnRoundedIcon fontSize="large"/>
         </ListItemAvatar>
         </ListItemAvatar>
-        <ListItemText primary="Total Assets" />
+        <ListItemText primary="Total Assets "/>
       </ListItem>
       
       <ListItem>

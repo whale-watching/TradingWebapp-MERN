@@ -1,6 +1,10 @@
 import React, { Component, useState, useEffect } from 'react';
 import './Home.css';
 
+import HeaderComp from './HeaderComp';
+import Widget from './Widget';
+import BuySell from './BuySell'
+
 
 
 
@@ -8,11 +12,20 @@ export default class Home extends Component {
 
     constructor(props) {
         super(props);
+
+        // default value of the state
         this.state = {
             userId: null, 
-            currentFiat: 0, 
+            username: null,
+            name: null,
+
+            totalAssetAmt: 0,
+            balance: 0,
+
             holding: {}, 
-            sortedHolding: {}
+            sortedHolding: {}, 
+
+            allOrders: []
         }
 
         // update the state if present in local storage
@@ -23,12 +36,10 @@ export default class Home extends Component {
     }
 
 
-
     componentDidMount() {
 
         this.listenToUpdatedPriceWs();
     }
-
 
     // updated the user details when ever we get the new current price 
     listenToUpdatedPriceWs() {
@@ -43,10 +54,28 @@ export default class Home extends Component {
         }
     }
 
+    
+    // called by the child class BuySell whenever user clicks on buy,sort or sell
+    placeOrder(order) {
+
+        // update totalAsset, holding, allOrder
+
+    }
+
     render() {
         return (
-            <div>
-                <h1>react frontend ;)</h1>
+            <div className='Home'>
+                <HeaderComp />
+                <div className="Content">
+                    <Widget />
+                    <BuySell 
+                        totalAssetAmt = {this.state.totalAssetAmt}
+                        balance = {this.state.balance}
+                        holding = {this.state.holding}
+                        sortedHolding = {this.state.sortedHolding}
+                        placeOrder = {this.placeOrder}
+                    />
+                </div>
             </div>
         )
     }

@@ -1,7 +1,5 @@
 import React from 'react';
-import HeaderComp from './components/HeaderComp'
-import Widget from './components/Widget'
-import BuySell from './components/BuySell'
+import Home from './components/Home/Home'
 import './App.css';
 
 
@@ -9,11 +7,7 @@ function App() {
 
   return (
     <div className="App">
-      <HeaderComp />
-      <div className="Content">
-      <Widget />
-      <BuySell />
-      </div>
+      <Home />
     </div>
   );
 }
