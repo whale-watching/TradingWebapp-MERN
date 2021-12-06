@@ -24,16 +24,6 @@ const start = () => {
         resave: false, 
         saveUninitialized: false,
     }));
-    
-    app.post("/register", (req, res) => {
-
-    //To get the input from client login component
-    
-    const username = req.body.username
-    const password = req.body.password
-    console.log(username , password);
-
-    });
 
     passportConf.init(passport);
     app.use(passport.initialize());

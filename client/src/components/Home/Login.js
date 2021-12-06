@@ -14,10 +14,12 @@ import { useNavigate } from 'react-router-dom';
             'Content-Type': 'application/json',
             'charset':'UTF-8'
         }
-        axios.post('http://localhost:8000/register',
+        axios.post('http://localhost:8000/api/user/register',
          {     
-          username: usernameReg,
+          userName: usernameReg,
           password: passwordReg,
+          name:"akhlas",
+          email:"baka@baka.com"
          },
          {headers: headers}
       ).then((response)=>{
