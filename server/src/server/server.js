@@ -1,7 +1,7 @@
 const express = require("express");
 const routes = require("../../routes");
 const database = require("../config/database");
-
+const cors = require("cors")
 const passport = require('passport');
 const passportConf = require('../config/passport');
 
@@ -12,6 +12,8 @@ const session = require('express-session');
 const start = () => {
 
     const app = express();
+    app.use(cors());
+    app.use(express.json());
 
     routes.init(app);
     // database.init();
@@ -22,6 +24,16 @@ const start = () => {
         resave: false, 
         saveUninitialized: false,
     }));
+    
+    app.post("/register", (req, res) => {
+
+    //To get the input from client login component
+    
+    const username = req.body.username
+    const password = req.body.password
+    console.log(username , password);
+
+    });
 
     passportConf.init(passport);
     app.use(passport.initialize());
