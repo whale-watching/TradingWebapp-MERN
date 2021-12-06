@@ -1,22 +1,31 @@
 import React from 'react'
-import TradingViewWidget from 'react-tradingview-widget';
+import TradingViewWidget, { Themes } from 'react-tradingview-widget';
 import './Widget.css'
-function Widget() {
+
+function Widget(sybmol) {
   
     return (
         <div className = "widget-class">
            <TradingViewWidget 
-           symbol="BINANCE:BTCUSDT" 
-           width = "800"
-           height = "500"
-           timezone = "Asia/Kolkata"
-           style = "2"
-           locale = "in"
-           toolbar_bg = "#f1f3f6"
-           enable_publishing = "false"
-           hide_top_toolbar =  "true"
-           range= "60M"
-           details = "true" 
+            symbol="BINANCE:BTCUSDT" 
+
+            width = "1300"
+            height = "700"
+
+            timezone = "Asia/Kolkata"
+            locale = "in"
+
+            style = "2"
+            theme={Themes.DARK}
+            range = "12M"
+
+
+            // toolbar_bg = "#f1f3f6"
+            allow_symbol_change = {false}
+            details = {true}
+            studies = {["MASimple@tv-basicstudies"]}
+            // hotlist = {true}
+            // calendar = {true}
            />
         </div>
     )
