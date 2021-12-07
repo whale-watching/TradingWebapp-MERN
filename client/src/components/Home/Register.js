@@ -1,17 +1,16 @@
 import React , {useState} from 'react'
-import { Link, BrowserRouter as Router} from "react-router-dom";
 import axios from 'axios';
-import HeaderComp from './HeaderComp';
+import { Link, BrowserRouter as Router} from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
-import './Login.css'
+import './Register.css'
 
- function Login(props) {
+ function Register(props) {
     let navigate = useNavigate(); 
     
-    const [usernameLog , setUsernameLog] = useState("");
-    const [passwordLog , setPasswordLog] = useState("");
+    const [usernameReg , setUsernameReg] = useState("");
+    const [passwordReg , setPasswordReg] = useState("");
     
-      // To make a register HTTP Request
+    // To make a register HTTP Request
     const register = ()=>{
 
         const headers = {
@@ -20,8 +19,8 @@ import './Login.css'
         }
         axios.post('http://localhost:8000/api/user/register',
          {     
-          userName: usernameLog,
-          password: passwordLog,
+          userName: usernameReg,
+          password: passwordReg,
           name:"akhlas",
           email:"akhlas@gmail.com"
          },
@@ -33,7 +32,7 @@ import './Login.css'
     
     const handleSubmit = e => {
         e.preventDefault();
-        console.log(usernameLog,passwordLog);
+        console.log(usernameReg,passwordReg);
     };
 
     let loginStatus = true;
@@ -49,16 +48,37 @@ import './Login.css'
     return (
         
         <div className="card">
-        <HeaderComp/>
         <div class="center">
-      <h1>Login</h1>
+      <h1>Register</h1>
       <form onSubmit={handleSubmit}>
+      <div class="txt_field">
+          <input 
+          type="text" 
+          required 
+          onChange={(e)=>{
+            setUsernameReg(e.target.value)
+        }}
+          />
+          <span></span>
+          <label>Name</label>
+        </div>
         <div class="txt_field">
           <input 
           type="text" 
           required 
           onChange={(e)=>{
-            setUsernameLog(e.target.value)
+            setUsernameReg(e.target.value)
+        }}
+          />
+          <span></span>
+          <label>Email</label>
+        </div>  
+        <div class="txt_field">
+          <input 
+          type="email" 
+          required 
+          onChange={(e)=>{
+            setUsernameReg(e.target.value)
         }}
           />
           <span></span>
@@ -69,7 +89,7 @@ import './Login.css'
           type="password" 
           required 
           onChange={(e)=>{
-            setPasswordLog(e.target.value)
+            setPasswordReg(e.target.value)
         }}
           />
           <span></span>
@@ -78,8 +98,8 @@ import './Login.css'
         <div class="pass" onClick={handleSubmit}>Forgot Password?</div>
         <input type="submit" value="Login" onClick={validateUser}/>
         <div class="signup_link">
-          Not a member? 
-        <Link to='/register'>Signup</Link>
+          Already a member? 
+        <Link to='/'>Login</Link>
         </div>
       </form>
     </div>
@@ -87,4 +107,4 @@ import './Login.css'
     )
 }
 
-export default Login ;
+export default Register ;
