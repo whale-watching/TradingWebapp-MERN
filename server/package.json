@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "client": "cd ../client && npm start",
-    "server": "nodemon app.js --ignore client",
+    "server": "nodemon app.js ",
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -1,13 +1,16 @@
 import React , {useState} from 'react'
 import axios from 'axios';
+import HeaderComp from './HeaderComp';
 import { useNavigate } from 'react-router-dom';
+import './Login.css'
 
  function Login(props) {
     let navigate = useNavigate(); 
     
     const [usernameReg , setUsernameReg] = useState("");
     const [passwordReg , setPasswordReg] = useState("");
-
+    
+      // To make a register HTTP Request
     const register = ()=>{
 
         const headers = {
@@ -19,13 +22,18 @@ import { useNavigate } from 'react-router-dom';
           userName: usernameReg,
           password: passwordReg,
           name:"akhlas",
-          email:"baka@baka.com"
+          email:"akhlas@gmail.com"
          },
          {headers: headers}
       ).then((response)=>{
         console.log(response);
       })
       };
+    
+    const handleSubmit = e => {
+        e.preventDefault();
+        console.log(usernameReg,passwordReg);
+    };
 
     let loginStatus = true;
     const validateUser = () => {                 //To check if a user is logged in or not.
@@ -38,41 +46,42 @@ import { useNavigate } from 'react-router-dom';
     }
     
     return (
-        <div>
-            <div>
-            <div>
-            <h1>Register</h1>
-            <input 
-            type="text" 
-            placeholder="username"
-            onChange={(e)=>{
-                setUsernameReg(e.target.value);
-            }}
-            />
-            <input 
-            type="text" 
-            placeholder="password"
-            onChange={(e)=>{
-                setPasswordReg(e.target.value);
-            }}
-            />
-            <button  
-            onClick={register}
-            > 
-            Register 
-            </button>
-            </div>
-
-            <h1>LOGIN</h1>
-            <input type="text" placeholder="username"/>
-            <input type="text" placeholder="password"/>
-            <button 
-            onClick={validateUser}
-            > 
-            Login 
-            </button>
-            </div>
+        
+        <div className="card">
+        <HeaderComp/>
+        <div class="center">
+      <h1>Login</h1>
+      <form onSubmit={handleSubmit}>
+        <div class="txt_field">
+          <input 
+          type="text" 
+          required 
+          onChange={(e)=>{
+            setUsernameReg(e.target.value)
+        }}
+          />
+          <span></span>
+          <label>Username</label>
         </div>
+        <div class="txt_field">
+          <input 
+          type="password" 
+          required 
+          onChange={(e)=>{
+            setPasswordReg(e.target.value)
+        }}
+          />
+          <span></span>
+          <label>Password</label>
+        </div>
+        <div class="pass" onClick={handleSubmit}>Forgot Password?</div>
+        <input type="submit" value="Login" onClick={validateUser}/>
+        <div class="signup_link">
+          Not a member? <a>Signup</a>
+        </div>
+      </form>
+    </div>
+      </div>
     )
 }
 
