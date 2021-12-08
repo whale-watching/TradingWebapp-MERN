@@ -7,38 +7,38 @@ import './Register.css'
  function Register(props) {
     let navigate = useNavigate(); 
     
-    const [usernameReg , setUsernameReg] = useState("");
+    const [nameReg , setNameReg] = useState("");
+    const [emailReg , setEmailReg] = useState("");
     const [passwordReg , setPasswordReg] = useState("");
     
     // To make a register HTTP Request
     const register = ()=>{
 
-        const headers = {
-            'Content-Type': 'application/json',
-            'charset':'UTF-8'
-        }
-        axios.post('http://localhost:8000/api/user/register',
-         {     
-          userName: usernameReg,
-          password: passwordReg,
-          name:"akhlas",
-          email:"akhlas@gmail.com"
-         },
-         {headers: headers}
-      ).then((response)=>{
-        console.log(response);
-      })
-      };
+        // const headers = {
+        //     'Content-Type': 'application/json',
+        //     'charset':'UTF-8'
+        // }
+          axios({
+            method: "POST",
+            data: {
+              name: nameReg,
+              email:emailReg,
+              password: passwordReg,
+            },
+            withCredentials: true,
+            url: "http://localhost:8000/register",
+          }).then((res) => console.log(res));
+        };
     
     const handleSubmit = e => {
         e.preventDefault();
-        console.log(usernameReg,passwordReg);
+        console.log(nameReg,emailReg,passwordReg);
     };
 
     let loginStatus = true;
     const validateUser = () => {                 //To check if a user is logged in or not.
        if(loginStatus){
-        navigate('/dashboard');                  //This is redirect the page to the home component.
+        navigate('/');                  //This is redirect the page to the home component.
        }
        else{
            console.log('user not logged in');
@@ -56,33 +56,23 @@ import './Register.css'
           type="text" 
           required 
           onChange={(e)=>{
-            setUsernameReg(e.target.value)
+            setNameReg(e.target.value)
         }}
           />
           <span></span>
           <label>Name</label>
         </div>
-        <div class="txt_field">
-          <input 
-          type="text" 
-          required 
-          onChange={(e)=>{
-            setUsernameReg(e.target.value)
-        }}
-          />
-          <span></span>
-          <label>Email</label>
-        </div>  
+         
         <div class="txt_field">
           <input 
           type="email" 
           required 
           onChange={(e)=>{
-            setUsernameReg(e.target.value)
+            setEmailReg(e.target.value)
         }}
           />
           <span></span>
-          <label>Username</label>
+          <label>Email</label>
         </div>
         <div class="txt_field">
           <input 
@@ -96,10 +86,10 @@ import './Register.css'
           <label>Password</label>
         </div>
         <div class="pass" onClick={handleSubmit}>Forgot Password?</div>
-        <input type="submit" value="Login" onClick={validateUser}/>
+        <input type="submit" value="Register" onClick={register}/>
         <div class="signup_link">
           Already a member? 
-        <Link to='/'>Login</Link>
+        <Link to='/login'>Login</Link>
         </div>
       </form>
     </div>
