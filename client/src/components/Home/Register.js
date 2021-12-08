@@ -72,7 +72,7 @@ import './Register.css'
         }}
           />
           <span></span>
-          <label>Username</label>
+          <label>Email</label>
         </div>
         <div class="txt_field">
           <input 
