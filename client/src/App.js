@@ -14,11 +14,11 @@ function App() {
     <Router>
     <div className="App">
       <Routes>
-        <Route exact path="/" 
+        <Route exact path="/login" 
         element={<Login />}/>
         <Route exact path="/register" 
         element={<Register />}/>
-        <Route exact path="/dashboard" element={<Home />} />
+        <Route exact path="/" element={<Home />} />
       </Routes>
     </div>
     </Router>
