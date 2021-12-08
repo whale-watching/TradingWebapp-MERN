@@ -9,8 +9,8 @@ function Widget(sybmol) {
            <TradingViewWidget 
             symbol="BINANCE:BTCUSDT" 
 
-            width = "1300"
-            height = "700"
+            width = "850"
+            height = "500"
 
             timezone = "Asia/Kolkata"
             locale = "in"

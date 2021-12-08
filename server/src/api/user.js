@@ -62,14 +62,14 @@ user.register = async (req, res, callback) => {
 
     try { 
         const hashedPassword = await bcrypt.hash(password, 10);
-
+ 
         const userDetails = {
             userName, 
             name, 
             email, 
             hashedPassword
         }
-
+        console.log(userDetails);
         // add to db
         userdb.push(userDetails);
 
@@ -80,7 +80,7 @@ user.register = async (req, res, callback) => {
         res.register("/register");
     }
 
-    console.log("\n User was reegistered userDetails: ", userDetails);
+    console.log("\n User was registered userDetails: ", userDetails);
 };
 
 user.updateUserDetails = (req, res, callback) => {

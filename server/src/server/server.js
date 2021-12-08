@@ -1,7 +1,7 @@
 const express = require("express");
 const routes = require("../../routes");
 const database = require("../config/database");
-
+const cors = require("cors")
 const passport = require('passport');
 const passportConf = require('../config/passport');
 
@@ -12,6 +12,8 @@ const session = require('express-session');
 const start = () => {
 
     const app = express();
+    app.use(cors());
+    app.use(express.json());
 
     routes.init(app);
     // database.init();

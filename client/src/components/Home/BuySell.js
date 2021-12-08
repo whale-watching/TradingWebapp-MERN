@@ -58,7 +58,7 @@ export default function BuySell(props) {
             <MonetizationOnRoundedIcon fontSize="large"/>
         </ListItemAvatar>
         </ListItemAvatar>
-        <ListItemText primary="Total Assets "/>
+        <ListItemText primary={`Total Assets ${props.totalAssetAmt}`}/>
       </ListItem>
       
       <ListItem>

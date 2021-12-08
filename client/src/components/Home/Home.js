@@ -19,7 +19,7 @@ export default class Home extends Component {
             username: null,
             name: null,
 
-            totalAssetAmt: 0,
+            totalAssetAmt: 1110,
             balance: 0,
 
             holding: {}, 
