@@ -1,13 +1,14 @@
 import React from "react";
 import TradingViewWidget, { Themes } from "react-tradingview-widget";
 import "./Widget.css";
+import { convertNameToTradingviewSybmol } from "../../utils/nameSymbol";
 
 function Widget(props) {
   return (
     <div className="widget-class">
       <TradingViewWidget
-        symbol="BINANCE:BTCUSDT"
-        
+        symbol={convertNameToTradingviewSybmol(props.coinSelectedName)}
+
         width={850}
         height={500}
 
