@@ -1,19 +1,10 @@
 import React, { useState } from "react";
 import "./BuySell.css";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import MonetizationOnRoundedIcon from "@mui/icons-material/MonetizationOnRounded";
 import CottageIcon from "@mui/icons-material/Cottage";
+import { InputLabel , MenuItem , FormControl , Select , Modal , Box , Stack , List , ListItem , ListItemText , ListItemAvatar , TextField} from "@mui/material"
 
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
 
 //Modal Styles
 const style = {
@@ -43,7 +34,21 @@ const style = {
     borderRadius: "5px",
     marginTop: "15px",
     marginBottom: "10px",
+    maxWidth: "56%"
   },
+  textBox:{
+    bgcolor: "white",
+    borderRadius: "5px",
+    maxWidth: "80%",
+    marginLeft: "15px"
+  },
+  stack:{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    margin: "10px"
+
+  }
 };
 
 export default function BuySell(props) {
@@ -51,13 +56,28 @@ export default function BuySell(props) {
   const handleChange = (event) => {
     setCoin(event.target.value);
   };
-
+  
+  //Buy Sell Modal handlers 
   const [buyopen, setBuyOpen] = useState(false);
   const [sellopen, setSellOpen] = useState(false);
   const handleBuyOpen = () => setBuyOpen(true);
   const handleSellOpen = () => setSellOpen(true);
 
+  //Buys Sell data states
   const [orderType, setOrderType] = useState("");
+  const [orderAmount , setOrderAmount] = useState(0);
+
+  const Order = () => {
+    console.log(orderAmount)
+     let order = {
+        sybmol: 'BINANCE:BTCUSDT', 
+        type: orderType, 
+        amount: orderAmount, 
+        priceAt: null, 
+        orderCompleted: true, 
+     }
+     props.placeOrder(order);
+  }
 
   return (
     <div className="BuySell-div">
@@ -133,7 +153,9 @@ export default function BuySell(props) {
         </button>
         <Modal open={buyopen} onClose={() => setBuyOpen(false)}>
           <Box sx={style.modal}>
-            <h1>Buy Modal text</h1>
+            <h3>Buy Modal text</h3>
+            <Stack sx={style.stack} direction="row" spacing={2}>
+            <h3>Order type :</h3>
             <FormControl sx={style.dropList} fullWidth>
               <InputLabel id="demo-simple-select-label">Order Type</InputLabel>
               <Select
@@ -146,10 +168,27 @@ export default function BuySell(props) {
                   // console.log(orderType);
                 }}
               >
-                <MenuItem value={"limit"}>Limit</MenuItem>
-                <MenuItem value={"mp"}>Market Price</MenuItem>
+                <MenuItem value={"buyAt"}>Buy At</MenuItem>
+                <MenuItem value={"buyNow"}>Buy Now</MenuItem>
               </Select>
             </FormControl>
+            </Stack>
+            <Stack sx={style.stack} direction="row" spacing={2}>
+              <h3>Buy Quantity :</h3>
+              <TextField 
+              sx={style.textBox} 
+              value={orderAmount}
+              id="outlined-basic" 
+              label="Quantity" 
+              variant="outlined"
+              onChange={(e)=>{
+                setOrderAmount(e.target.value);
+              }}
+              />
+            </Stack>
+            <button className="button green-button" onClick={Order}>
+              <span>Buy</span>
+            </button>
           </Box>
         </Modal>
 
@@ -167,7 +206,9 @@ export default function BuySell(props) {
         </button>
         <Modal open={sellopen} onClose={() => setSellOpen(false)}>
           <Box sx={style.modal}>
-            <h1>Sell Modal text</h1>
+            <h2>Sell Modal text</h2>
+            <Stack sx={style.stack} direction="row" spacing={2}>
+            <h3>Order type :</h3>
             <FormControl sx={style.dropList} fullWidth>
               <InputLabel id="demo-simple-select-label">Order Type</InputLabel>
               <Select
@@ -175,12 +216,29 @@ export default function BuySell(props) {
                 id="demo-simple-select"
                 value={orderType}
                 label="Type"
-                onChange={handleChange}
+                onChange={(e)=>{
+                setOrderType(e.target.value);
+              }}
               >
-                <MenuItem value={"limit"}>Limit</MenuItem>
-                <MenuItem value={"mp"}>Market Price</MenuItem>
+                <MenuItem value={"sellAt"}>Sell At</MenuItem>
+                <MenuItem value={"sellNow"}>Sell Now</MenuItem>
               </Select>
             </FormControl>
+            </Stack>
+            <Stack sx={style.stack} direction="row" spacing={2}>
+              <h3>Sell Quantity :</h3>
+              <TextField sx={style.textBox} 
+              id="outlined-basic" 
+              label="Quantity" 
+              variant="outlined" 
+              onChange={(e)=>{
+                setOrderAmount(e.target.value);
+              }}
+              />
+            </Stack>
+            <button className="button red-button" onClick={Order}>
+              <span>Sell</span>
+            </button>
           </Box>
         </Modal>
 

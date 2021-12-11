@@ -67,6 +67,7 @@ export default class Home extends Component {
     placeOrder = (order)=> {
 
         // update totalAsset, holding, allOrders
+        console.log("at Home" , order);
 
         if(order === null) { // for testing only
             console.log("updating order to default");
@@ -76,7 +77,6 @@ export default class Home extends Component {
                 amount: 100, 
                 priceAt: null, // 
                 orderCompleted: true, 
-
             }
         }
 
