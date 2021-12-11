@@ -15,8 +15,8 @@
   color: white;
   text-decoration: none;
   border: none;
-  padding: 18px 70px;
-  margin: 0px -45px;
+  padding: 18px 40px;
+  margin: 0px 10px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -29,6 +29,9 @@
 .red-button {
   background-color: red;
 }
+.blue-button {
+  background-color: blue;
+}
 
 .button-row {
   width: inherit;
@@ -36,5 +39,6 @@
   display: flex;
   align-items: center;
   align-content: center;
-  justify-content: space-evenly;
+  justify-content: center;
+
 }
