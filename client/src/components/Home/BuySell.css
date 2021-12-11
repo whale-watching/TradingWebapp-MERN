@@ -15,7 +15,7 @@
   color: white;
   text-decoration: none;
   border: none;
-  padding: 18px 70px;
+  padding: 18px 40px;
   margin: 0px -45px;
   text-align: center;
   text-decoration: none;
@@ -28,6 +28,9 @@
 }
 .red-button {
   background-color: red;
+}
+.blue-button {
+  background-color: blue;
 }
 
 .button-row {
