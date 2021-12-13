@@ -16,7 +16,7 @@ const start = () => {
     app.use(express.json());
 
     routes.init(app);
-    // database.init();
+    database.init();
 
     // app.use(flash());
     app.use(session({

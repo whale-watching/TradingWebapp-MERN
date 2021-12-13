@@ -1,38 +1,37 @@
 const bcrypt = require('bcrypt');
 
-const { db, dbUser } = require('../config/database');
+const { getUserDb } = require('../config/database');
 
-const getUserByEmail = async (email, password, done) => {
-    if(!email || !password) {
+const getUserByEmail = async (email, done) => {
+    if(!email) {
         return done(null);
     }
 
     // search for the user in db using the email
-    const user = await dbUser.findOne({email});
+    const userDb = await getUserDb();
+    const user = await userDb.findOne({email});
 
-    if(user) {
-        return done(null, user);
-    }
-    else {
-        return done(null, false);
-    }
+    // console.log("User got form email ", user);
+
+    return user;
 }
 
 const authenticateUser = async (email, password, done) => {
-    const user = await getUserByEmail(email);
+    const user = await getUserByEmail(email, done);
 
     if(user == null) {
-        return done(null, false, {message: 'No user with this email'});
+        return done(null, false, {message: 'Wrong email'});
     }
 
     try {
-        if(await bcrypt.compare(password, user.password)) {
+        if(await bcrypt.compare(password, user.hashedPassword)) {
             // password right
+            // console.log("correct password");
             return done(null, user);
         }
         else {
             // wrong password
-            return done(null, false, { message: 'Password incorrect' });
+            return done(null, false, {message: 'Wrong Password'});
         }
     }
     catch(err) {

@@ -1,99 +1,102 @@
 const bcrypt = require("bcrypt");
+const passport = require("passport");
+const {
+  generate10DigitAlphaNumeric,
+} = require("../util/randomNumberGenerator");
 
-const { db } = require("../config/database");
+const { getUserDb } = require("../config/database");
 
-let userdb = [];
 
-let user = {};
+let action = {};
 
-user.login = (req, res, done) => {
-    console.log("\n\n in login route");
-    
-    const { body: { user } } = req;
+action.login = (req, res, done) => {
+  console.log("got data from frontend = ", req.body);
 
-    if(!user.email) {
-      return res.status(422).json({
-        errors: {
-          email: 'is required',
-        },
-      });
-    }
-  
-    if(!user.password) {
-      return res.status(422).json({
-        errors: {
-          password: 'is required',
-        },
-      });
-    }
-  
-    return passport.authenticate('local', { session: false }, (err, passportUser, info) => {
-      if(err) {
+  const data = req.body;
+
+  if (!data.email) {
+    return res.status(422).json({
+      errors: {
+        email: "is required",
+      },
+    });
+  }
+
+  if (!data.password) {
+    return res.status(422).json({
+      errors: {
+        password: "is required",
+      },
+    });
+  }
+
+  return passport.authenticate(
+    "local",
+    { session: false },
+    (err, passportUser, info) => {
+      if (err) {
+        console.log("passport error", err);
         return done(err);
       }
-  
-      if(passportUser) {
-        const user = passportUser;
-        // user.token = passportUser.generateJWT();
-  
-        return res.json({ 
-            success: true,
-            user: user
+
+      // console.log("error in passport authenticate", err)
+      // console.log("passport user ", passportUser);
+
+      if (passportUser) {
+        let user = {
+          id: passportUser.id,
+          name: passportUser.name,
+          email: passportUser.email,
+        };
+
+        console.log("User is authenticated, returning user", user);
+
+        return res.json({
+          success: true,
+          user: user,
+        });
+      } else {
+        console.log("not user found err: ", info.message);
+        return res.json({
+          success: false,
+          error: info.message,
         });
       }
-      else {
-          return res.json({
-            success: false, 
-          });
-      }
-  
-    })(req, res, done);
-};
 
-user.logout = (req, res, callback) => {
-    console.log("\n\n in logout route")
-
-};
-
-user.register = async (req, res, callback) => {
-    console.log("\n\n in register route")
-
-    const { userName, name, email, password } = req.body;
-
-    try { 
-        const hashedPassword = await bcrypt.hash(password, 10);
- 
-        const userDetails = {
-            userName, 
-            name, 
-            email, 
-            hashedPassword
-        }
-        console.log(userDetails);
-        // add to db
-        userdb.push(userDetails);
-
-        res.redirect("/login");
     }
-    catch(err) {
-        console.log(err);
-        res.register("/register");
-    }
-
-    console.log("\n User was registered userDetails: ", userDetails);
+  )(req, res, done);
 };
 
-user.updateUserDetails = (req, res, callback) => {
-
+action.logout = (req, res, callback) => {
+  console.log("\n\n in logout route");
 };
 
-user.getUserDetails = (req, res, callback) => {
+action.register = async (req, res, callback) => {
+  console.log("\n\n in register route");
 
+  const id = generate10DigitAlphaNumeric();
+  const { name, email, password } = req.body;
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const userDb = await getUserDb();
+
+    const dbResult = await userDb
+      .insertOne({ id, name, email, hashedPassword });
+    console.log("added user to db ", dbResult.ops[0]);
+
+    // res.redirect("/login");
+  } catch (err) {
+    console.log("error while registering ", err);
+    res.redirect("/register");
+  }
 };
 
-user.getUserOrder = (req, res, callback) => {
+action.updateUserDetails = (req, res, callback) => {};
 
-};
+action.getUserDetails = (req, res, callback) => {};
 
+action.getUserOrder = (req, res, callback) => {};
 
-module.exports = user;
+module.exports = action;

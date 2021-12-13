@@ -12,46 +12,41 @@ function Register(props) {
   const [passwordReg, setPasswordReg] = useState("");
 
   // To make a register HTTP Request
-  const register = () => {
+  const register = async () => {
+    console.log("going to post");
+
     const headers = {
       "Content-Type": "application/json",
       charset: "UTF-8",
     };
-    axios({
+
+    const res = await axios({
       method: "POST",
       data: {
-        userName: nameReg,
         name: nameReg,
         email: emailReg,
         password: passwordReg,
       },
       headers: { headers },
       withCredentials: true,
-      url: "http://localhost:8000/api/user/register",
-    }).then((res) => console.log(res));
+      url: "/user/register",
+    });
+    console.log("after await res ", res);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(nameReg, emailReg, passwordReg);
+    // console.log(nameReg, emailReg, passwordReg);
   };
 
-  let loginStatus = true;
-  const validateUser = () => {
-    //To check if a user is logged in or not.
-    if (loginStatus) {
-      navigate("/"); //This is redirect the page to the home component.
-    } else {
-      console.log("user not logged in");
-    }
-  };
+
 
   return (
     <div className="card">
-      <div class="center">
+      <div className="center">
         <h1>Register</h1>
         <form onSubmit={handleSubmit}>
-          <div class="txt_field">
+          <div className="txt_field">
             <input
               type="text"
               required
@@ -63,7 +58,7 @@ function Register(props) {
             <label>Name</label>
           </div>
 
-          <div class="txt_field">
+          <div className="txt_field">
             <input
               type="email"
               required
@@ -74,7 +69,7 @@ function Register(props) {
             <span></span>
             <label>Email</label>
           </div>
-          <div class="txt_field">
+          <div className="txt_field">
             <input
               type="password"
               required
@@ -85,11 +80,11 @@ function Register(props) {
             <span></span>
             <label>Password</label>
           </div>
-          <div class="pass" onClick={handleSubmit}>
+          <div className="pass" onClick={handleSubmit}>
             Forgot Password?
           </div>
           <input type="submit" value="Register" onClick={register} />
-          <div class="signup_link">
+          <div className="signup_link">
             Already a member?
             <Link to="/login">Login</Link>
           </div>
