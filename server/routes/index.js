@@ -8,8 +8,8 @@ const init = (app) => {
         res.send("It's working!");
     });
 
-    app.use("/api/user", userRoute);
-    app.use("/api/order", orderRoute);
+    app.use("/user", userRoute);
+    app.use("/order", orderRoute);
 
 }
 
