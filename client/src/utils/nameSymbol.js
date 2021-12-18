@@ -2,7 +2,6 @@ const nameTradingviewSybmol = {
     bitcoin: 'BINANCE:BTCUSDT', 
     ethereum: 'BINANCE:ETHUSDT', 
     doge: 'BINANCE:DOGEUSDT',
-    
     tesla: 'NASDAQ:TSLA',
      
 }

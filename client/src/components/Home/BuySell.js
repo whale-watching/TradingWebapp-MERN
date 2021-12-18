@@ -3,6 +3,7 @@ import "./BuySell.css";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import MonetizationOnRoundedIcon from "@mui/icons-material/MonetizationOnRounded";
 import CottageIcon from "@mui/icons-material/Cottage";
+import { convertNameToTradingviewSybmol } from "../../utils/nameSymbol";
 import { InputLabel , MenuItem , FormControl , Select , Modal , Box , Stack , List , ListItem , ListItemText , ListItemAvatar , TextField} from "@mui/material"
 
 
@@ -52,9 +53,10 @@ const style = {
 };
 
 export default function BuySell(props) {
-  const [coin, setCoin] = React.useState("");
+  const [coin, setCoin] = React.useState('');
   const handleChange = (event) => {
     setCoin(event.target.value);
+    props.onChange(event.target.value);
   };
   
   //Buy Sell Modal handlers 
@@ -70,12 +72,12 @@ export default function BuySell(props) {
   const Order = () => {
     console.log(orderAmount)
      let order = {
-        sybmol: 'BINANCE:BTCUSDT', 
-        type: orderType, 
-        amount: orderAmount, 
-        priceAt: null, 
-        orderCompleted: true, 
-     }
+       sybmol: convertNameToTradingviewSybmol(coin),
+       type: orderType,
+       amount: orderAmount,
+       priceAt: null,
+       orderCompleted: true,
+     };
      props.placeOrder(order);
   }
 
@@ -91,10 +93,10 @@ export default function BuySell(props) {
             label="Coin"
             onChange={handleChange}
           >
-            <MenuItem value={10}>Bitcoin</MenuItem>
-            <MenuItem value={20}>Ethereum</MenuItem>
-            <MenuItem value={30}>Doge Coin</MenuItem>
-            <MenuItem value={40}>Tesla</MenuItem>
+            <MenuItem value={"bitcoin"}>Bitcoin</MenuItem>
+            <MenuItem value={"ethereum"}>Ethereum</MenuItem>
+            <MenuItem value={"doge"}>Doge Coin</MenuItem>
+            <MenuItem value={"tesla"}>Tesla</MenuItem>
           </Select>
         </FormControl>
       </div>
@@ -155,35 +157,38 @@ export default function BuySell(props) {
           <Box sx={style.modal}>
             <h3>Buy Modal text</h3>
             <Stack sx={style.stack} direction="row" spacing={2}>
-            <h3>Order type :</h3>
-            <FormControl sx={style.dropList} fullWidth>
-              <InputLabel id="demo-simple-select-label">Order Type</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={orderType}
-                label="Type"
-                onChange={(e) => {
-                  setOrderType(e.target.value);
-                  // console.log(orderType);
-                }}
-              >
-                <MenuItem value={"buyAt"}>Buy At</MenuItem>
-                <MenuItem value={"buyNow"}>Buy Now</MenuItem>
-              </Select>
-            </FormControl>
+              <h3>Order type :</h3>
+              <FormControl sx={style.dropList} fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Order Type
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={orderType}
+                  label="Type"
+                  onChange={(e) => {
+                    setOrderType(e.target.value);
+                    // console.log(orderType);
+                  }}
+                >
+                  <MenuItem value={"buyAt"}>Buy At</MenuItem>
+                  <MenuItem value={"buyNow"}>Buy Now</MenuItem>
+                </Select>
+              </FormControl>
             </Stack>
             <Stack sx={style.stack} direction="row" spacing={2}>
               <h3>Buy Quantity :</h3>
-              <TextField 
-              sx={style.textBox} 
-              value={orderAmount}
-              id="outlined-basic" 
-              label="Quantity" 
-              variant="outlined"
-              onChange={(e)=>{
-                setOrderAmount(e.target.value);
-              }}
+              <TextField
+                sx={style.textBox}
+                value={orderAmount}
+                id="outlined-basic"
+                type="number"
+                label="Quantity"
+                variant="outlined"
+                onChange={(e) => {
+                  setOrderAmount(e.target.value);
+                }}
               />
             </Stack>
             <button className="button green-button" onClick={Order}>
@@ -208,32 +213,35 @@ export default function BuySell(props) {
           <Box sx={style.modal}>
             <h2>Sell Modal text</h2>
             <Stack sx={style.stack} direction="row" spacing={2}>
-            <h3>Order type :</h3>
-            <FormControl sx={style.dropList} fullWidth>
-              <InputLabel id="demo-simple-select-label">Order Type</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={orderType}
-                label="Type"
-                onChange={(e)=>{
-                setOrderType(e.target.value);
-              }}
-              >
-                <MenuItem value={"sellAt"}>Sell At</MenuItem>
-                <MenuItem value={"sellNow"}>Sell Now</MenuItem>
-              </Select>
-            </FormControl>
+              <h3>Order type :</h3>
+              <FormControl sx={style.dropList} fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Order Type
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={orderType}
+                  label="Type"
+                  onChange={(e) => {
+                    setOrderType(e.target.value);
+                  }}
+                >
+                  <MenuItem value={"sellAt"}>Sell At</MenuItem>
+                  <MenuItem value={"sellNow"}>Sell Now</MenuItem>
+                </Select>
+              </FormControl>
             </Stack>
             <Stack sx={style.stack} direction="row" spacing={2}>
               <h3>Sell Quantity :</h3>
-              <TextField sx={style.textBox} 
-              id="outlined-basic" 
-              label="Quantity" 
-              variant="outlined" 
-              onChange={(e)=>{
-                setOrderAmount(e.target.value);
-              }}
+              <TextField
+                sx={style.textBox}
+                id="outlined-basic"
+                label="Quantity"
+                variant="outlined"
+                onChange={(e) => {
+                  setOrderAmount(e.target.value);
+                }}
               />
             </Stack>
             <button className="button red-button" onClick={Order}>
