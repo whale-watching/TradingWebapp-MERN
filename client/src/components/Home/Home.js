@@ -1,6 +1,6 @@
 import React, { Component, useState, useEffect } from "react";
 import "./Home.css";
-
+import {token} from '../../secret';
 import HeaderComp from "./HeaderComp";
 import Widget from "./Widget";
 import BuySell from "./BuySell";
@@ -48,15 +48,31 @@ export default class Home extends Component {
 
   // updated the user details when ever we get the new current price
   listenToUpdatedPriceWs() {
-    // listening to new updated price
-    const pricesWs = new WebSocket(
-      "wss://ws.coincap.io/prices?assets=bitcoin,ethereum"
-    );
+        // listening to new updated price
+        // const pricesWs = new WebSocket(
+        //   "wss://ws.coincap.io/prices?assets=bitcoin,ethereum,dogecoin,teslafan"
+        // );
+        // pricesWs.onmessage = function (msg) {
 
-    pricesWs.onmessage = function (msg) {
-      // updated the totalAssetAmt, holding/sortedHolding worth when ever we get the new current price
-      // console.log(msg.data)
-    };
+        //     // updated the user details when ever we get the new current price 
+
+        //     console.log(msg.data)
+        // }
+        const socket = new WebSocket(
+        'wss://ws.finnhub.io?token='+ token
+        );
+        socket.addEventListener("open", function (event) {
+          // socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'TSLA'}))
+          // socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'AMD'}))
+          socket.send(
+            JSON.stringify({ type: "subscribe", symbol: "BINANCE:BTCUSDT" })
+          );
+        });
+
+        // Listen for messages
+        socket.addEventListener("message", function (event) {
+          console.log("Message from server ", event.data);
+        });
   }
 
   executePrevCompletedOrders() {
@@ -80,6 +96,12 @@ export default class Home extends Component {
         orderCompleted: true,
       };
     }
+    
+    setCoinHandler = (coin) => {
+        this.setState({coinSelectedName:coin});
+        console.log(coin);
+    }
+
 
     switch (order.type) {
       case "buyNow":
