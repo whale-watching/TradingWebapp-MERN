@@ -1,11 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./BuySell.css";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import MonetizationOnRoundedIcon from "@mui/icons-material/MonetizationOnRounded";
 import CottageIcon from "@mui/icons-material/Cottage";
 import { convertNameToTradingviewSybmol } from "../../utils/nameSymbol";
-import { InputLabel , MenuItem , FormControl , Select , Modal , Box , Stack , List , ListItem , ListItemText , ListItemAvatar , TextField} from "@mui/material"
-
+import {
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
+  Modal,
+  Box,
+  Stack,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  TextField,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+} from "@mui/material";
 
 //Modal Styles
 const style = {
@@ -35,31 +50,40 @@ const style = {
     borderRadius: "5px",
     marginTop: "15px",
     marginBottom: "10px",
-    maxWidth: "56%"
+    maxWidth: "56%",
   },
-  textBox:{
+  textBox: {
     bgcolor: "white",
     borderRadius: "5px",
     maxWidth: "80%",
-    marginLeft: "15px"
+    marginLeft: "15px",
   },
-  stack:{
+  stack: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    margin: "10px"
-
-  }
+    margin: "10px",
+  },
+  coinlist: {
+    width: "auto",
+  },
+  radioList: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "60%",
+    margin: "0px",
+  },
 };
 
 export default function BuySell(props) {
-  const [coin, setCoin] = React.useState('');
+  const [coin, setCoin] = React.useState("");
   const handleChange = (event) => {
     setCoin(event.target.value);
     props.onChange(event.target.value);
   };
-  
-  //Buy Sell Modal handlers 
+
+  //Buy Sell Modal handlers
   const [buyopen, setBuyOpen] = useState(false);
   const [sellopen, setSellOpen] = useState(false);
   const handleBuyOpen = () => setBuyOpen(true);
@@ -67,19 +91,21 @@ export default function BuySell(props) {
 
   //Buys Sell data states
   const [orderType, setOrderType] = useState("");
-  const [orderAmount , setOrderAmount] = useState(0);
+  const [orderAmount, setOrderAmount] = useState(0);
+  const [buyAtAmount, setBuyAtAmount] = useState(0);
 
   const Order = () => {
-    console.log(orderAmount)
-     let order = {
-       sybmol: convertNameToTradingviewSybmol(coin),
-       type: orderType,
-       amount: orderAmount,
-       priceAt: null,
-       orderCompleted: true,
-     };
-     props.placeOrder(order);
-  }
+    console.log(orderAmount);
+    let order = {
+      sybmol: convertNameToTradingviewSybmol(coin),
+      coinSelectedName: coin,
+      type: orderType,
+      amount: orderAmount,
+      priceAt: null,
+      orderCompleted: true,
+    };
+    props.placeOrder(order);
+  };
 
   return (
     <div className="BuySell-div">
@@ -87,8 +113,10 @@ export default function BuySell(props) {
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">Coin</InputLabel>
           <Select
+            sx={style.coinlist}
             labelId="demo-simple-select-label"
             id="demo-simple-select"
+            fullWidth
             value={coin}
             label="Coin"
             onChange={handleChange}
@@ -158,23 +186,29 @@ export default function BuySell(props) {
             <h3>Buy Modal text</h3>
             <Stack sx={style.stack} direction="row" spacing={2}>
               <h3>Order type :</h3>
-              <FormControl sx={style.dropList} fullWidth>
-                <InputLabel id="demo-simple-select-label">
-                  Order Type
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={orderType}
-                  label="Type"
+              <FormControl sx={style.radioList} fullWidth>
+                <RadioGroup
+                  row
+                  aria-label="gender"
+                  color="black"
+                  defaultValue="buyAt"
+                  name="row-radio-buttons-group"
                   onChange={(e) => {
                     setOrderType(e.target.value);
                     // console.log(orderType);
                   }}
                 >
-                  <MenuItem value={"buyAt"}>Buy At</MenuItem>
-                  <MenuItem value={"buyNow"}>Buy Now</MenuItem>
-                </Select>
+                  <FormControlLabel
+                    value="buyNow"
+                    control={<Radio />}
+                    label="BUY NOW"
+                  />
+                  <FormControlLabel
+                    value="buyAt"
+                    control={<Radio />}
+                    label="BUY AT"
+                  />
+                </RadioGroup>
               </FormControl>
             </Stack>
             <Stack sx={style.stack} direction="row" spacing={2}>
@@ -187,15 +221,44 @@ export default function BuySell(props) {
                 label="Quantity"
                 variant="outlined"
                 onChange={(e) => {
-                  setOrderAmount(e.target.value);
+                  setOrderAmount(Number(e.target.value));
                 }}
               />
             </Stack>
+            {orderType == "buyAt" ? (
+              <Stack sx={style.stack} direction="row" spacing={2}>
+                <h3>Buy AT Price :</h3>
+                <TextField
+                  sx={style.textBox}
+                  value={buyAtAmount}
+                  id="outlined-basic"
+                  type="number"
+                  label="Price"
+                  variant="outlined"
+                  onChange={(e) => {
+                    setBuyAtAmount(e.target.value);
+                  }}
+                />
+              </Stack>
+            ) : (
+              console.log("")
+            )}
             <button className="button green-button" onClick={Order}>
               <span>Buy</span>
             </button>
           </Box>
         </Modal>
+        {/*Sort Button*/}
+
+        <button
+          onClick={() => {
+            // props.placeOrder();
+            console.log("called sell");
+          }}
+          className="button blue-button"
+        >
+          <span>Sort</span>
+        </button>
 
         {/*Sell Button*/}
 
@@ -249,18 +312,6 @@ export default function BuySell(props) {
             </button>
           </Box>
         </Modal>
-
-        {/*Sort Button*/}
-
-        <button
-          onClick={() => {
-            // props.placeOrder();
-            console.log("called sell");
-          }}
-          className="button blue-button"
-        >
-          <span>Sort</span>
-        </button>
       </div>
     </div>
   );

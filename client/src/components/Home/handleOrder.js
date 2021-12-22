@@ -1,28 +1,26 @@
-const currentPrice = {bitcoin: 55000};
+// const currentPrice = {bitcoin: 55000};
 
-const handleBuyNow = (balance ,holding, order) => {
+const handleBuyNow = (balance, holding, currentPrice, order) => {
+  // 1. Reduce balance
+  let newBalance = balance - order.amount;
 
-    // 1. Reduce balance
-    let newBalance = balance - order.amount;
+  // 2. Increase holding
 
+  // orderAmt / priceOfEachCoin
+  let newBoughtHolding = order.amount / currentPrice[order.coinSelectedName];
 
-    // 2. Increase holding
-    
-    // orderAmt / priceOfEachCoin
-    let newBoughtHolding = order.amount / currentPrice[order.coinSelectedName]; 
+  if (!holding[order.coinSelectedName]) {
+    // first time buying that coin/stocks
+    holding[order.coinSelectedName] = newBoughtHolding;
+  } else {
+    holding[order.coinSelectedName] += newBoughtHolding;
+  }
 
-    if(! holding[order.coinSelectedName]) { // first time buying that coin/stocks
-        holding[order.coinSelectedName] = newBoughtHolding;
-    }
-    else {
-        holding[order.coinSelectedName] += newBoughtHolding;
-    }
-
-    return {
-        newBalance: newBalance,
-        newHolding: holding
-    }
-}
+  return {
+    newBalance: newBalance,
+    newHolding: holding,
+  };
+};
 
 const handleSortNow = (balance, sortedHolding, order) => {
 
