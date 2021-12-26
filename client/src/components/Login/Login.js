@@ -30,6 +30,17 @@ function Login(props) {
       url: "/user/login",
     });
 
+    if(res.data.success) {
+      console.log("login success user data: ", res.data.user);
+
+      // save session to local storage
+      window.localStorage.setItem('loginData', JSON.stringify(res.data.user));
+
+      // redirect to /
+      window.location.href = '/'; //relative to domain
+
+    }
+    
     console.log("send login axios");
   };
 
