@@ -1,6 +1,6 @@
 import React, { Component, useState, useEffect } from "react";
 import "./Home.css";
-import {token} from '../../secret';
+// import {token} from '../../secret';
 import HeaderComp from "./HeaderComp";
 import Widget from "./Widget";
 import BuySell from "./BuySell";
@@ -13,6 +13,8 @@ import {
   handleSellNow,
   handleSellAt,
 } from "./handleOrder";
+
+const token = 'fa'; // testing
 
 export default class Home extends Component {
   constructor(props) {
@@ -39,6 +41,17 @@ export default class Home extends Component {
 
     // update the state if present in local storage else create a userId and save state to local storage
 
+    this.userDataLocalStorage = JSON.parse(window.localStorage.getItem('loginData'));
+    console.log("userdata in localStorage", this.userDataLocalStorage);;
+    if(this.userDataLocalStorage) {
+      this.state.userId = this.userDataLocalStorage.userId;
+      this.state.email = this.userDataLocalStorage.email;
+      this.state.name = this.userDataLocalStorage.name;
+      // this.state.userId = this.userDataLocalStorage.userId;
+
+    }
+
+    // this.currentPrice
     this.executePrevCompletedOrders();
   }
 
@@ -97,7 +110,7 @@ export default class Home extends Component {
       };
     }
     
-    setCoinHandler = (coin) => {
+    const setCoinHandler = (coin) => {
         this.setState({coinSelectedName:coin});
         console.log(coin);
     }
