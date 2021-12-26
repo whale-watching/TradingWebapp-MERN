@@ -1,8 +1,11 @@
 .BuySell-div {
   display: flex;
+  width: fit-content;
   flex-direction: column;
   align-items: center;
-  width: 100%;
+  max-width: 35%;
+  justify-content: space-between;
+  align-content: center;
 }
 
 .Dropdown {
@@ -34,7 +37,7 @@
 }
 
 .button-row {
-  width: inherit;
+  width: fit-content;
   padding: 2rem 1.5rem 2rem 1.5rem;
   display: flex;
   align-items: center;

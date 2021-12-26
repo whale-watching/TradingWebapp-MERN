@@ -1,4 +1,5 @@
 import React, { Component, useState, useEffect } from "react";
+import { convertNameToTradingviewSybmol } from "../../utils/nameSymbol";
 import "./Home.css";
 // import {token} from '../../secret';
 import HeaderComp from "./HeaderComp";
@@ -29,7 +30,7 @@ export default class Home extends Component {
       name: null,
 
       totalAssetAmt: 1000,
-      balance: 1000,
+      balance: 1000000000000,
 
       holding: {},
       sortedHolding: {},
@@ -37,6 +38,7 @@ export default class Home extends Component {
       allOrders: [],
 
       coinSelectedName: "bitcoin", // default
+      currentPrice: 0,
     };
 
     // update the state if present in local storage else create a userId and save state to local storage
@@ -55,37 +57,56 @@ export default class Home extends Component {
     this.executePrevCompletedOrders();
   }
 
-  componentDidMount() {
+  componentDidLoad() {
+    this.listenToUpdatedPriceWs();
+  }
+  componentDidUpdate() {
     this.listenToUpdatedPriceWs();
   }
 
   // updated the user details when ever we get the new current price
   listenToUpdatedPriceWs() {
-        // listening to new updated price
-        // const pricesWs = new WebSocket(
-        //   "wss://ws.coincap.io/prices?assets=bitcoin,ethereum,dogecoin,teslafan"
-        // );
-        // pricesWs.onmessage = function (msg) {
+    const selectedCoin = convertNameToTradingviewSybmol(
+      this.state.coinSelectedName
+    );
+    console.log(convertNameToTradingviewSybmol(this.state.coinSelectedName));
+    // listening to new updated price
+    // const pricesWs = new WebSocket(
+    //   "wss://ws.coincap.io/prices?assets=bitcoin,ethereum,dogecoin,teslafan"
+    // );
+    // pricesWs.onmessage = function (msg) {
 
-        //     // updated the user details when ever we get the new current price 
+    //     // updated the user details when ever we get the new current price
 
-        //     console.log(msg.data)
-        // }
-        const socket = new WebSocket(
-        'wss://ws.finnhub.io?token='+ token
+    //     console.log(msg.data)
+    // }
+    const socket = new WebSocket(`wss://ws.finnhub.io?token=${token}`);
+    socket
+      .addEventListener("open", function (event) {
+        // socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'TSLA'}))
+        socket.send(
+          JSON.stringify({
+            type: "subscribe",
+            symbol: selectedCoin,
+            // symbol: "BINANCE:ETHUSDT",
+          })
         );
-        socket.addEventListener("open", function (event) {
-          // socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'TSLA'}))
-          // socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'AMD'}))
-          socket.send(
-            JSON.stringify({ type: "subscribe", symbol: "BINANCE:BTCUSDT" })
-          );
-        });
+      });
 
-        // Listen for messages
-        socket.addEventListener("message", function (event) {
-          console.log("Message from server ", event.data);
-        });
+    // Listen for messages
+    socket.addEventListener(
+      "message",
+      function (event) {
+         console.log("Message from server ", event.data);
+        try {
+          const currprice = JSON.parse(event.data).data[0].p;
+          console.log(currprice);
+          // this.setState({ currentPrice : currprice });
+        } catch (err) {
+          console.log(err);
+        }
+      }.bind(this)
+    );
   }
 
   executePrevCompletedOrders() {
@@ -101,7 +122,7 @@ export default class Home extends Component {
       // for testing only
       console.log("updating order to default");
       order = {
-        sybmol: "BINANCE:BTCUSDT",
+        symbol: "BINANCE:BTCUSDT",
         coinSelectedName: "bitcoin",
         type: "buyNow",
         amount: 100,
@@ -115,12 +136,17 @@ export default class Home extends Component {
         console.log(coin);
     }
 
+    // const setCoinHandler = (coin) => {
+    //     this.setState({coinSelectedName:coin});
+    //     console.log(coin);
+    // }
 
     switch (order.type) {
       case "buyNow":
         const { newBalance, newHolding } = handleBuyNow(
           this.state.balance,
           this.state.holding,
+          this.state.currentPrice,
           order
         );
         this.setState({ balance: newBalance, holding: newHolding });
@@ -170,6 +196,7 @@ export default class Home extends Component {
             holding={this.state.holding}
             sortedHolding={this.state.sortedHolding}
             placeOrder={this.placeOrder}
+            onChange={(value) => this.setState({ coinSelectedName: value })}
           />
         </div>
       </div>

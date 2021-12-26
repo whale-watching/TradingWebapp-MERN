@@ -9,8 +9,8 @@ function Widget(props) {
       <TradingViewWidget
         symbol={convertNameToTradingviewSybmol(props.coinSelectedName)}
 
-        width={850}
-        height={500}
+        width={950}
+        height={550}
 
         timezone="Asia/Kolkata"
         locale="in"
