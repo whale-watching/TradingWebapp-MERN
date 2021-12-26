@@ -142,7 +142,7 @@ export default function BuySell(props) {
           >
             <MenuItem value={"bitcoin"}>Bitcoin</MenuItem>
             <MenuItem value={"ethereum"}>Ethereum</MenuItem>
-            <MenuItem value={"doge"}>Doge Coin</MenuItem>
+            <MenuItem value={"dogecoin"}>Doge Coin</MenuItem>
             <MenuItem value={"tesla"}>Tesla</MenuItem>
           </Select>
         </FormControl>

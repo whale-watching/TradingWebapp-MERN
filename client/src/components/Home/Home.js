@@ -1,7 +1,7 @@
 import React, { Component, useState, useEffect } from "react";
 import { convertNameToTradingviewSybmol } from "../../utils/nameSymbol";
 import "./Home.css";
-// import {token} from '../../secret';
+import { token } from "../../secret.js";
 import HeaderComp from "./HeaderComp";
 import Widget from "./Widget";
 import BuySell from "./BuySell";
@@ -15,13 +15,19 @@ import {
   handleSellAt,
 } from "./handleOrder";
 
-const token = 'fa'; // testing
-
 export default class Home extends Component {
   constructor(props) {
     super(props);
 
     // console.log("\n In constr");
+
+    // stores the current price
+    this.currentPrice = {
+      bitcoin: null,
+      ethereum: null,
+      dogecoin: null,
+      tesla: null,
+    };
 
     // default value of the state
     this.state = {
@@ -38,75 +44,94 @@ export default class Home extends Component {
       allOrders: [],
 
       coinSelectedName: "bitcoin", // default
-      currentPrice: 0,
     };
 
     // update the state if present in local storage else create a userId and save state to local storage
 
-    this.userDataLocalStorage = JSON.parse(window.localStorage.getItem('loginData'));
-    console.log("userdata in localStorage", this.userDataLocalStorage);;
-    if(this.userDataLocalStorage) {
+    this.userDataLocalStorage = JSON.parse(
+      window.localStorage.getItem("loginData")
+    );
+    console.log("userdata in localStorage", this.userDataLocalStorage);
+    if (this.userDataLocalStorage) {
       this.state.userId = this.userDataLocalStorage.userId;
       this.state.email = this.userDataLocalStorage.email;
       this.state.name = this.userDataLocalStorage.name;
       // this.state.userId = this.userDataLocalStorage.userId;
-
     }
 
-    // this.currentPrice
+    this.listenToUpdatedPriceWs();
+
     this.executePrevCompletedOrders();
   }
 
-  componentDidLoad() {
-    this.listenToUpdatedPriceWs();
-  }
-  componentDidUpdate() {
-    this.listenToUpdatedPriceWs();
-  }
-
-  // updated the user details when ever we get the new current price
+  // updated the this.currentPrice, user details whenever we get a new current price
   listenToUpdatedPriceWs() {
-    const selectedCoin = convertNameToTradingviewSybmol(
-      this.state.coinSelectedName
+
+    // 1. websocket listener for bitcoin, etherium, dogecoin
+
+    const pricesWs = new WebSocket(
+      "wss://ws.coincap.io/prices?assets=bitcoin,ethereum,dogecoin"
     );
-    console.log(convertNameToTradingviewSybmol(this.state.coinSelectedName));
-    // listening to new updated price
-    // const pricesWs = new WebSocket(
-    //   "wss://ws.coincap.io/prices?assets=bitcoin,ethereum,dogecoin,teslafan"
-    // );
-    // pricesWs.onmessage = function (msg) {
+    pricesWs.onmessage = function (msg) {
+      msg = JSON.parse(msg.data);
+      // console.log(msg)
+      if (msg.bitcoin) this.currentPrice.bitcoin = msg.bitcoin;
+      if (msg.ethereum) this.currentPrice.ethereum = msg.ethereum;
+      if (msg.dogecoin) this.currentPrice.dogecoin = msg.dogecoin;
 
-    //     // updated the user details when ever we get the new current price
+      // console.log('this.current price updated to ', this.currentPrice);
+    }.bind(this);
 
-    //     console.log(msg.data)
-    // }
+
+    // 2. websocket listener for tesla
+
     const socket = new WebSocket(`wss://ws.finnhub.io?token=${token}`);
-    socket
-      .addEventListener("open", function (event) {
-        // socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'TSLA'}))
-        socket.send(
-          JSON.stringify({
-            type: "subscribe",
-            symbol: selectedCoin,
-            // symbol: "BINANCE:ETHUSDT",
-          })
-        );
-      });
 
+    socket.addEventListener('open', function (event) {
+      socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'BINANCE:ETHUSDT'}))
+    });
+    
     // Listen for messages
-    socket.addEventListener(
-      "message",
-      function (event) {
-         console.log("Message from server ", event.data);
+    socket.addEventListener('message', function (event) {
+        // console.log('Message from server ', event.data);
         try {
-          const currprice = JSON.parse(event.data).data[0].p;
-          console.log(currprice);
-          // this.setState({ currentPrice : currprice });
-        } catch (err) {
-          console.log(err);
+          const currPrice = JSON.parse(event.data).data[0].p;
+          console.log(currPrice);
+          this.currentPrice.tesla = currPrice;
         }
-      }.bind(this)
-    );
+        catch(err) {
+          console.log("err in parsing tesla websocket curr price", err);
+        }
+    }.bind(this));
+
+  
+    /*
+    socket.addEventListener("open", function (event) {
+      // socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'TSLA'}))
+      socket.send(
+        JSON.stringify({
+          type: "subscribe",
+          symbol: "TSLA",
+          // symbol: "BINANCE:ETHUSDT",
+        })
+      );
+
+      // Listen for messages
+      socket.addEventListener(
+        "message",
+        function (event) {
+          console.log("Message from server ", event.data);
+          try {
+            const currprice = JSON.parse(event.data).data[0].p;
+            console.log(currprice);
+            // this.setState({ currentPrice : currprice });
+          } catch (err) {
+            console.log(err);
+          }
+        }.bind(this)
+      );
+    });
+    */
   }
 
   executePrevCompletedOrders() {
@@ -131,10 +156,13 @@ export default class Home extends Component {
       };
     }
     
-    const setCoinHandler = (coin) => {
-        this.setState({coinSelectedName:coin});
-        console.log(coin);
+    if(this.currentPrice[order.coinSelectedName] === null) {
+      alert("Order can't be placed, current price not found for ", order.coinSelectedName);
     }
+    const setCoinHandler = (coin) => {
+      this.setState({ coinSelectedName: coin });
+      console.log(coin);
+    };
 
     // const setCoinHandler = (coin) => {
     //     this.setState({coinSelectedName:coin});
@@ -146,8 +174,8 @@ export default class Home extends Component {
         const { newBalance, newHolding } = handleBuyNow(
           this.state.balance,
           this.state.holding,
-          this.state.currentPrice,
-          order
+          order,
+          this.currentPrice,
         );
         this.setState({ balance: newBalance, holding: newHolding });
         break;
