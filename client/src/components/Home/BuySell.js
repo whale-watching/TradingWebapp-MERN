@@ -74,6 +74,12 @@ const style = {
     width: "60%",
     margin: "0px",
   },
+  radioButton:{
+    overFlow:"hidden",
+    whiteSpace:"nowrap",
+    maxWidth:"50%",
+    fontSize:"10px"
+  }
 };
 
 export default function BuySell(props) {
@@ -86,13 +92,19 @@ export default function BuySell(props) {
   //Buy Sell Modal handlers
   const [buyopen, setBuyOpen] = useState(false);
   const [sellopen, setSellOpen] = useState(false);
+  const [sortopen, setSortOpen] = useState(false);
   const handleBuyOpen = () => setBuyOpen(true);
   const handleSellOpen = () => setSellOpen(true);
+  const handleSortOpen = () => setSortOpen(true);
+  
 
   //Buys Sell data states
   const [orderType, setOrderType] = useState("");
   const [orderAmount, setOrderAmount] = useState(0);
   const [buyAtAmount, setBuyAtAmount] = useState(0);
+  const [sellAtAmount, setSellAtAmount] = useState(0);
+  const [sortAtAmount, setSortAtAmount] = useState(0);
+
 
   const Order = () => {
     console.log(orderAmount);
@@ -101,7 +113,14 @@ export default function BuySell(props) {
       coinSelectedName: coin,
       type: orderType,
       amount: orderAmount,
-      priceAt: null,
+      priceAt:
+        orderType == "buyAt"
+        ? buyAtAmount 
+        : orderType == "sellAt" 
+        ? sellAtAmount
+        : orderType == "sortAt"
+        ? sortAtAmount 
+        : 0,
       orderCompleted: true,
     };
     props.placeOrder(order);
@@ -175,6 +194,7 @@ export default function BuySell(props) {
         <button
           onClick={() => {
             handleBuyOpen();
+            setOrderType("buyNow");
             props.placeOrder(null);
           }}
           className="button green-button"
@@ -191,7 +211,7 @@ export default function BuySell(props) {
                   row
                   aria-label="gender"
                   color="black"
-                  defaultValue="buyAt"
+                  defaultValue="buyNow"
                   name="row-radio-buttons-group"
                   onChange={(e) => {
                     setOrderType(e.target.value);
@@ -199,11 +219,13 @@ export default function BuySell(props) {
                   }}
                 >
                   <FormControlLabel
+                    sx={style.radioButton}
                     value="buyNow"
                     control={<Radio />}
                     label="BUY NOW"
                   />
                   <FormControlLabel
+                    sx={style.radioButton}
                     value="buyAt"
                     control={<Radio />}
                     label="BUY AT"
@@ -225,7 +247,7 @@ export default function BuySell(props) {
                 }}
               />
             </Stack>
-            {orderType == "buyAt" ? (
+            { orderType == "buyAt" &&
               <Stack sx={style.stack} direction="row" spacing={2}>
                 <h3>Buy AT Price :</h3>
                 <TextField
@@ -236,13 +258,11 @@ export default function BuySell(props) {
                   label="Price"
                   variant="outlined"
                   onChange={(e) => {
-                    setBuyAtAmount(e.target.value);
+                    setBuyAtAmount(Number(e.target.value));
                   }}
                 />
               </Stack>
-            ) : (
-              console.log("")
-            )}
+            }
             <button className="button green-button" onClick={Order}>
               <span>Buy</span>
             </button>
@@ -252,6 +272,8 @@ export default function BuySell(props) {
 
         <button
           onClick={() => {
+            handleSortOpen();
+            setOrderType("sortNow");
             // props.placeOrder();
             console.log("called sell");
           }}
@@ -259,12 +281,80 @@ export default function BuySell(props) {
         >
           <span>Sort</span>
         </button>
+        <Modal open={sortopen} onClose={() => setSortOpen(false)}>
+          <Box sx={style.modal}>
+            <h3>Sort Modal text</h3>
+            <Stack sx={style.stack} direction="row" spacing={2}>
+              <h3>Order type :</h3>
+              <FormControl sx={style.radioList} fullWidth>
+                <RadioGroup
+                  row
+                  aria-label="gender"
+                  color="black"
+                  defaultValue="sortNow"
+                  name="row-radio-buttons-group"
+                  onChange={(e) => {
+                    setOrderType(e.target.value);
+                    // console.log(orderType);
+                  }}
+                >
+                  <FormControlLabel
+                    sx={style.radioButton}
+                    value="sortNow"
+                    control={<Radio />}
+                    label="Sort NOW"
+                  />
+                  <FormControlLabel
+                    sx={style.radioButton}
+                    value="sortAt"
+                    control={<Radio />}
+                    label="Sort AT"
+                  />
+                </RadioGroup>
+              </FormControl>
+            </Stack>
+            <Stack sx={style.stack} direction="row" spacing={2}>
+              <h3>Sort Quantity :</h3>
+              <TextField
+                sx={style.textBox}
+                value={orderAmount}
+                id="outlined-basic"
+                type="number"
+                label="Quantity"
+                variant="outlined"
+                onChange={(e) => {
+                  setOrderAmount(Number(e.target.value));
+                }}
+              />
+            </Stack>
+            {orderType == "sortAt" &&
+              <Stack sx={style.stack} direction="row" spacing={2}>
+                <h3>Sort AT Price :</h3>
+                <TextField
+                  sx={style.textBox}
+                  value={sortAtAmount}
+                  id="outlined-basic"
+                  type="number"
+                  label="Price"
+                  variant="outlined"
+                  onChange={(e) => {
+                    setSortAtAmount(Number(e.target.value));
+                  }}
+                />
+              </Stack>
+            }
+            <button className="button blue-button" onClick={Order}>
+              <span>Sort</span>
+            </button>
+          </Box>
+        </Modal>
 
         {/*Sell Button*/}
 
         <button
           onClick={() => {
             handleSellOpen();
+            setOrderType("sellNow");
             // props.placeOrder();
             console.log("called sell");
           }}
@@ -277,7 +367,7 @@ export default function BuySell(props) {
             <h2>Sell Modal text</h2>
             <Stack sx={style.stack} direction="row" spacing={2}>
               <h3>Order type :</h3>
-              <FormControl sx={style.dropList} fullWidth>
+              {/* <FormControl sx={style.dropList} fullWidth>
                 <InputLabel id="demo-simple-select-label">
                   Order Type
                 </InputLabel>
@@ -293,6 +383,32 @@ export default function BuySell(props) {
                   <MenuItem value={"sellAt"}>Sell At</MenuItem>
                   <MenuItem value={"sellNow"}>Sell Now</MenuItem>
                 </Select>
+              </FormControl> */}
+              <FormControl sx={style.radioList} fullWidth>
+                <RadioGroup
+                  row
+                  aria-label="gender"
+                  color="black"
+                  defaultValue="sellNow"
+                  name="row-radio-buttons-group"
+                  onChange={(e) => {
+                    setOrderType(e.target.value);
+                    // console.log(orderType);
+                  }}
+                >
+                  <FormControlLabel
+                    sx={style.radioButton}
+                    value="sellNow"
+                    control={<Radio />}
+                    label="SELL NOW"
+                  />
+                  <FormControlLabel
+                    sx={style.radioButton}
+                    value="sellAt"
+                    control={<Radio />}
+                    label="SELL AT"
+                  />
+                </RadioGroup>
               </FormControl>
             </Stack>
             <Stack sx={style.stack} direction="row" spacing={2}>
@@ -303,10 +419,26 @@ export default function BuySell(props) {
                 label="Quantity"
                 variant="outlined"
                 onChange={(e) => {
-                  setOrderAmount(e.target.value);
+                  setOrderAmount(Number(e.target.value));
                 }}
               />
             </Stack>
+            {orderType == "sellAt" && 
+              <Stack sx={style.stack} direction="row" spacing={2}>
+                <h3>Sell AT Price :</h3>
+                <TextField
+                  sx={style.textBox}
+                  value={sellAtAmount}
+                  id="outlined-basic"
+                  type="number"
+                  label="Price"
+                  variant="outlined"
+                  onChange={(e) => {
+                    setSellAtAmount(Number(e.target.value));
+                  }}
+                />
+              </Stack>
+            }
             <button className="button red-button" onClick={Order}>
               <span>Sell</span>
             </button>

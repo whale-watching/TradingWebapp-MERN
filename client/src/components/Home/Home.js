@@ -84,9 +84,9 @@ export default class Home extends Component {
     socket.addEventListener(
       "message",
       function (event) {
-        console.log("Message from server ", event.data);
+         console.log("Message from server ", event.data);
         try {
-          const currprice = JSON.parse(event.data).data[1].p;
+          const currprice = JSON.parse(event.data).data[0].p;
           console.log(currprice);
           // this.setState({ currentPrice : currprice });
         } catch (err) {
