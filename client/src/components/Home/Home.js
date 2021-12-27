@@ -19,24 +19,18 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
 
-    // console.log("\n In constr");
+    console.log("\n In constr called");
 
-    // stores the current price
-    this.currentPrice = {
-      bitcoin: null,
-      ethereum: null,
-      dogecoin: null,
-      tesla: null,
-    };
-
+    this.lastTotalAssetChange = 'none';
+    
     // default value of the state
     this.state = {
       userId: null, // random alpha numeric string of len 10
       email: null,
       name: null,
 
-      totalAssetAmt: 1000,
-      balance: 1000000000000,
+      totalAssetAmt: '',
+      balance: 10000,
 
       holding: {},
       sortedHolding: {},
@@ -44,14 +38,21 @@ export default class Home extends Component {
       allOrders: [],
 
       coinSelectedName: "bitcoin", // default
+
+      currentPrice: {
+        bitcoin: null,
+        ethereum: null,
+        dogecoin: null,
+        tesla: null,
+      }
+
     };
 
     // update the state if present in local storage else create a userId and save state to local storage
-
     this.userDataLocalStorage = JSON.parse(
       window.localStorage.getItem("loginData")
     );
-    console.log("userdata in localStorage", this.userDataLocalStorage);
+    // console.log("userdata in localStorage", this.userDataLocalStorage);
     if (this.userDataLocalStorage) {
       this.state.userId = this.userDataLocalStorage.userId;
       this.state.email = this.userDataLocalStorage.email;
@@ -64,7 +65,43 @@ export default class Home extends Component {
     this.executePrevCompletedOrders();
   }
 
-  // updated the this.currentPrice, user details whenever we get a new current price
+  componentDidUpdate(prevProps, prevState){
+
+    // console.log("in componentdidupdate", prevProps, prevState);
+
+    let newTotalAssetAmt = this.state.balance;
+    
+    if(this.state.holding.bitcoin && this.state.currentPrice.bitcoin) {
+      newTotalAssetAmt += this.state.holding.bitcoin*this.state.currentPrice.bitcoin;
+    }
+    if(this.state.holding.ethereum && this.state.currentPrice.ethereum) {
+      newTotalAssetAmt += this.state.holding.ethereum*this.state.currentPrice.ethereum;
+    }
+    if(this.state.holding.dogecoin && this.state.currentPrice.dogecoin) {
+      newTotalAssetAmt += this.state.holding.dogecoin*this.state.currentPrice.dogecoin;
+    }
+    if(this.state.holding.tesla && this.state.currentPrice.tesla) {
+      newTotalAssetAmt += this.state.holding.tesla*this.state.currentPrice.tesla;
+    }
+
+    this.state.totalAssetAmt = newTotalAssetAmt; // no setState() so as to avoid re render
+
+    console.log("this.state.totalAssetAmt updated to ", this.state.totalAssetAmt, typeof(this.state.totalAssetAmt));
+
+    if(prevState.totalAssetAmt !== '') { // handle case for first time totalAssetAmt updation
+      if(prevState.totalAssetAmt > this.state.totalAssetAmt) {
+        console.log("total asset increased ;) green");
+        this.lastTotalAssetChange = 'positive';
+      }
+      if(prevState.totalAssetAmt < this.state.totalAssetAmt) {
+        console.log("total asset increased ;) green");
+        this.lastTotalAssetChange = 'negative';
+      }
+    }
+
+  }
+
+  // updated the this.state.currentPrice, user details whenever we get a new current price
   listenToUpdatedPriceWs() {
 
     // 1. websocket listener for bitcoin, etherium, dogecoin
@@ -75,11 +112,12 @@ export default class Home extends Component {
     pricesWs.onmessage = function (msg) {
       msg = JSON.parse(msg.data);
       // console.log(msg)
-      if (msg.bitcoin) this.currentPrice.bitcoin = msg.bitcoin;
-      if (msg.ethereum) this.currentPrice.ethereum = msg.ethereum;
-      if (msg.dogecoin) this.currentPrice.dogecoin = msg.dogecoin;
+      if (msg.bitcoin) this.state.currentPrice.bitcoin = msg.bitcoin;
+      if (msg.ethereum) this.state.currentPrice.ethereum = msg.ethereum;
+      if (msg.dogecoin) this.state.currentPrice.dogecoin = msg.dogecoin;
 
-      // console.log('this.current price updated to ', this.currentPrice);
+      this.setState({ currentPrice : this.state.currentPrice });
+      // console.log('this.current price updated to ', this.state.currentPrice);
     }.bind(this);
 
 
@@ -96,42 +134,14 @@ export default class Home extends Component {
         // console.log('Message from server ', event.data);
         try {
           const currPrice = JSON.parse(event.data).data[0].p;
-          console.log(currPrice);
-          this.currentPrice.tesla = currPrice;
+          // console.log(currPrice);
+          this.state.currentPrice.tesla = currPrice;
         }
         catch(err) {
           console.log("err in parsing tesla websocket curr price", err);
         }
     }.bind(this));
 
-  
-    /*
-    socket.addEventListener("open", function (event) {
-      // socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'TSLA'}))
-      socket.send(
-        JSON.stringify({
-          type: "subscribe",
-          symbol: "TSLA",
-          // symbol: "BINANCE:ETHUSDT",
-        })
-      );
-
-      // Listen for messages
-      socket.addEventListener(
-        "message",
-        function (event) {
-          console.log("Message from server ", event.data);
-          try {
-            const currprice = JSON.parse(event.data).data[0].p;
-            console.log(currprice);
-            // this.setState({ currentPrice : currprice });
-          } catch (err) {
-            console.log(err);
-          }
-        }.bind(this)
-      );
-    });
-    */
   }
 
   executePrevCompletedOrders() {
@@ -156,7 +166,7 @@ export default class Home extends Component {
       };
     }
     
-    if(this.currentPrice[order.coinSelectedName] === null) {
+    if(this.state.currentPrice[order.coinSelectedName] === null) {
       alert("Order can't be placed, current price not found for ", order.coinSelectedName);
     }
     const setCoinHandler = (coin) => {
@@ -175,7 +185,7 @@ export default class Home extends Component {
           this.state.balance,
           this.state.holding,
           order,
-          this.currentPrice,
+          this.state.currentPrice,
         );
         this.setState({ balance: newBalance, holding: newHolding });
         break;
@@ -223,6 +233,7 @@ export default class Home extends Component {
             balance={this.state.balance}
             holding={this.state.holding}
             sortedHolding={this.state.sortedHolding}
+            lastTotalAssetChange={this.lastTotalAssetChange}
             placeOrder={this.placeOrder}
             onChange={(value) => this.setState({ coinSelectedName: value })}
           />
