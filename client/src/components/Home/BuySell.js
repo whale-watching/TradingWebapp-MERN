@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./BuySell.css";
+import Typography from "@material-ui/core/Typography";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import MonetizationOnRoundedIcon from "@mui/icons-material/MonetizationOnRounded";
 import CottageIcon from "@mui/icons-material/Cottage";
@@ -74,15 +75,24 @@ const style = {
     width: "60%",
     margin: "0px",
   },
-  radioButton:{
-    overFlow:"hidden",
-    whiteSpace:"nowrap",
-    maxWidth:"50%",
-    fontSize:"10px"
-  }
+  radioButton: {
+    overFlow: "hidden",
+    whiteSpace: "nowrap",
+    maxWidth: "50%",
+    fontSize: "10px",
+  },
 };
 
 export default function BuySell(props) {
+  console.log("\n\n\n\n was re rendered", props.totalAssetAmt);
+
+  let totalAssetColor = "white";
+  if (props.lastTotalAssetChange === "negative") {
+    totalAssetColor = "red";
+  } else if (props.lastTotalAssetChange === "positive") {
+    totalAssetColor = "#32CD32";
+  }
+
   const [coin, setCoin] = React.useState("");
   const handleChange = (event) => {
     setCoin(event.target.value);
@@ -96,7 +106,6 @@ export default function BuySell(props) {
   const handleBuyOpen = () => setBuyOpen(true);
   const handleSellOpen = () => setSellOpen(true);
   const handleSortOpen = () => setSortOpen(true);
-  
 
   //Buys Sell data states
   const [orderType, setOrderType] = useState("");
@@ -104,7 +113,6 @@ export default function BuySell(props) {
   const [buyAtAmount, setBuyAtAmount] = useState(0);
   const [sellAtAmount, setSellAtAmount] = useState(0);
   const [sortAtAmount, setSortAtAmount] = useState(0);
-
 
   const Order = () => {
     console.log(orderAmount);
@@ -115,12 +123,12 @@ export default function BuySell(props) {
       amount: orderAmount,
       priceAt:
         orderType == "buyAt"
-        ? buyAtAmount 
-        : orderType == "sellAt" 
-        ? sellAtAmount
-        : orderType == "sortAt"
-        ? sortAtAmount 
-        : 0,
+          ? buyAtAmount
+          : orderType == "sellAt"
+          ? sellAtAmount
+          : orderType == "sortAt"
+          ? sortAtAmount
+          : 0,
       orderCompleted: true,
     };
     props.placeOrder(order);
@@ -154,7 +162,19 @@ export default function BuySell(props) {
               <MonetizationOnRoundedIcon fontSize="large" />
             </ListItemAvatar>
           </ListItemAvatar>
-          <ListItemText primary={`Total Assets ${props.totalAssetAmt}`} />
+          {/* <ListItemText primary={`Total Assets ${props.totalAssetAmt}`} /> */}
+          <ListItemText
+            disableTypography
+            primary={
+              <>
+                <Typography display="inline">Total Assets: $ </Typography>
+
+                <Typography display="inline" style={{ color: totalAssetColor }}>
+                  {props.totalAssetAmt}
+                </Typography>
+              </>
+            }
+          />
         </ListItem>
 
         <ListItem>
@@ -247,7 +267,7 @@ export default function BuySell(props) {
                 }}
               />
             </Stack>
-            { orderType == "buyAt" &&
+            {orderType == "buyAt" && (
               <Stack sx={style.stack} direction="row" spacing={2}>
                 <h3>Buy AT Price :</h3>
                 <TextField
@@ -262,7 +282,7 @@ export default function BuySell(props) {
                   }}
                 />
               </Stack>
-            }
+            )}
             <button className="button green-button" onClick={Order}>
               <span>Buy</span>
             </button>
@@ -327,7 +347,7 @@ export default function BuySell(props) {
                 }}
               />
             </Stack>
-            {orderType == "sortAt" &&
+            {orderType == "sortAt" && (
               <Stack sx={style.stack} direction="row" spacing={2}>
                 <h3>Sort AT Price :</h3>
                 <TextField
@@ -342,7 +362,7 @@ export default function BuySell(props) {
                   }}
                 />
               </Stack>
-            }
+            )}
             <button className="button blue-button" onClick={Order}>
               <span>Sort</span>
             </button>
@@ -423,7 +443,7 @@ export default function BuySell(props) {
                 }}
               />
             </Stack>
-            {orderType == "sellAt" && 
+            {orderType == "sellAt" && (
               <Stack sx={style.stack} direction="row" spacing={2}>
                 <h3>Sell AT Price :</h3>
                 <TextField
@@ -438,7 +458,7 @@ export default function BuySell(props) {
                   }}
                 />
               </Stack>
-            }
+            )}
             <button className="button red-button" onClick={Order}>
               <span>Sell</span>
             </button>

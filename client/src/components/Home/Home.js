@@ -22,14 +22,15 @@ export default class Home extends Component {
     console.log("\n In constr called");
 
     this.lastTotalAssetChange = 'none';
-    
+    this.lastTotalAssetChangeTimeout = null;
+
     // default value of the state
     this.state = {
       userId: null, // random alpha numeric string of len 10
       email: null,
       name: null,
 
-      totalAssetAmt: '',
+      totalAssetAmt: 10000,
       balance: 10000,
 
       holding: {},
@@ -89,13 +90,21 @@ export default class Home extends Component {
     console.log("this.state.totalAssetAmt updated to ", this.state.totalAssetAmt, typeof(this.state.totalAssetAmt));
 
     if(prevState.totalAssetAmt !== '') { // handle case for first time totalAssetAmt updation
-      if(prevState.totalAssetAmt > this.state.totalAssetAmt) {
-        console.log("total asset increased ;) green");
-        this.lastTotalAssetChange = 'positive';
-      }
+
+      clearTimeout(this.lastTotalAssetChangeTimeout);
+
       if(prevState.totalAssetAmt < this.state.totalAssetAmt) {
         console.log("total asset increased ;) green");
+        this.lastTotalAssetChange = 'positive';
+
+        this.lastTotalAssetChangeTimeout = setTimeout(() => { this.lastTotalAssetChange = 'none'; }, 2000);
+      }
+
+      else if(prevState.totalAssetAmt > this.state.totalAssetAmt) {
+        console.log("total asset increased ;) green");
         this.lastTotalAssetChange = 'negative';
+
+        this.lastTotalAssetChangeTimeout = setTimeout(() => { this.lastTotalAssetChange = 'none'; }, 1000);
       }
     }
 
@@ -229,7 +238,7 @@ export default class Home extends Component {
         <div className="Content">
           <Widget coinSelectedName={this.state.coinSelectedName} />
           <BuySell
-            totalAssetAmt={this.state.totalAssetAmt}
+            totalAssetAmt={parseFloat(this.state.totalAssetAmt.toFixed(6))}
             balance={this.state.balance}
             holding={this.state.holding}
             sortedHolding={this.state.sortedHolding}
