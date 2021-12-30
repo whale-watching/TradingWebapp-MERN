@@ -19,7 +19,7 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
 
-    console.log("\n In constr called");
+    console.log("constr called");
 
     this.lastTotalAssetChange = 'none';
     this.lastTotalAssetChangeTimeout = null;
@@ -49,29 +49,23 @@ export default class Home extends Component {
 
     };
 
-    // update the state if present in local storage else create a userId and save state to local storage
-    this.userDataLocalStorage = JSON.parse(
-      window.localStorage.getItem("loginData")
-    );
-    // console.log("userdata in localStorage", this.userDataLocalStorage);
-    if (this.userDataLocalStorage) {
-      this.state.userId = this.userDataLocalStorage.userId;
-      this.state.email = this.userDataLocalStorage.email;
-      this.state.name = this.userDataLocalStorage.name;
-      // this.state.userId = this.userDataLocalStorage.userId;
-    }
-
     this.listenToUpdatedPriceWs();
-
     this.executePrevCompletedOrders();
   }
 
-  componentDidUpdate(prevProps, prevState){
+
+  componentDidMount() {
+    this.updateUserDataFromLocalStorage();// update the state if present in local storage else create a userId and save state to local storage
+  }
+
+  
+  componentDidUpdate(prevProps, prevState) {
 
     // console.log("in componentdidupdate", prevProps, prevState);
 
+
+    // update this.state.totalAssetAmt on price change
     let newTotalAssetAmt = this.state.balance;
-    
     if(this.state.holding.bitcoin && this.state.currentPrice.bitcoin) {
       newTotalAssetAmt += this.state.holding.bitcoin*this.state.currentPrice.bitcoin;
     }
@@ -84,28 +78,69 @@ export default class Home extends Component {
     if(this.state.holding.tesla && this.state.currentPrice.tesla) {
       newTotalAssetAmt += this.state.holding.tesla*this.state.currentPrice.tesla;
     }
-
     this.state.totalAssetAmt = newTotalAssetAmt; // no setState() so as to avoid re render
 
-    console.log("this.state.totalAssetAmt updated to ", this.state.totalAssetAmt, typeof(this.state.totalAssetAmt));
+    // console.log("this.state.totalAssetAmt updated to ", this.state.totalAssetAmt, typeof(this.state.totalAssetAmt));
 
+
+    // update this.lastTotalAssetChange
     if(prevState.totalAssetAmt !== '') { // handle case for first time totalAssetAmt updation
 
       clearTimeout(this.lastTotalAssetChangeTimeout);
 
       if(prevState.totalAssetAmt < this.state.totalAssetAmt) {
-        console.log("total asset increased ;) green");
+        // console.log("total asset increased ;) green");
         this.lastTotalAssetChange = 'positive';
 
         this.lastTotalAssetChangeTimeout = setTimeout(() => { this.lastTotalAssetChange = 'none'; }, 2000);
       }
 
       else if(prevState.totalAssetAmt > this.state.totalAssetAmt) {
-        console.log("total asset increased ;) green");
+        // console.log("total asset increased ;( red");
         this.lastTotalAssetChange = 'negative';
 
         this.lastTotalAssetChangeTimeout = setTimeout(() => { this.lastTotalAssetChange = 'none'; }, 1000);
       }
+    }
+
+
+    // only update the userData in the localStorage if any newOrder was placed i.e allOrders was changed
+    // console.log(JSON.stringify(prevState.allOrders), JSON.stringify(this.state.allOrders));
+
+    if(JSON.stringify(prevState.allOrders) !== JSON.stringify(this.state.allOrders)) {
+      let userData = {...this.state}; // all property of this.state except coinSelectedName, currentPrice
+      delete userData.coinSelectedName;
+      delete userData.currentPrice;
+
+      window.localStorage.setItem("userData", JSON.stringify(userData));
+      console.log(" wrote to local storage", userData);
+    }
+
+  }
+
+
+  updateUserDataFromLocalStorage() {
+    try {
+      // console.log("userData got in localstorage", window.localStorage.getItem("userData"));
+
+      let userDataLocalStorage = JSON.parse(window.localStorage.getItem("userData"));
+      console.log("userdata in localStorage", userDataLocalStorage);
+
+      if (userDataLocalStorage) {
+        // console.log("this before , \n\n", this);
+
+        const {userId, email, name, balance, holding, sortedHolding, allOrders} = userDataLocalStorage;
+        this.setState({userId, email, name, balance, holding, sortedHolding, allOrders});
+        // console.log("updated from localStorage to ", userId, email, name, balance, holding, sortedHolding, allOrders);
+
+        // this.setState({ balance: 5 }, () => {
+        //   console.log("\n\n\n", this.state.balance, 'balance');
+        // }); 
+      }
+    }
+    catch(err) {
+      console.log("cant read userData from local storage",err);
+      window.localStorage.setItem("userData", ""); // if some data cant be read reset.
     }
 
   }
@@ -121,11 +156,14 @@ export default class Home extends Component {
     pricesWs.onmessage = function (msg) {
       msg = JSON.parse(msg.data);
       // console.log(msg)
-      if (msg.bitcoin) this.state.currentPrice.bitcoin = msg.bitcoin;
-      if (msg.ethereum) this.state.currentPrice.ethereum = msg.ethereum;
-      if (msg.dogecoin) this.state.currentPrice.dogecoin = msg.dogecoin;
 
-      this.setState({ currentPrice : this.state.currentPrice });
+      let newCurrentPrice = {...this.state.currentPrice};
+
+      if (msg.bitcoin) newCurrentPrice.bitcoin = msg.bitcoin;
+      if (msg.ethereum) newCurrentPrice.ethereum = msg.ethereum;
+      if (msg.dogecoin) newCurrentPrice.dogecoin = msg.dogecoin;
+
+      this.setState({ currentPrice : newCurrentPrice });
       // console.log('this.current price updated to ', this.state.currentPrice);
     }.bind(this);
 
@@ -144,7 +182,10 @@ export default class Home extends Component {
         try {
           const currPrice = JSON.parse(event.data).data[0].p;
           // console.log(currPrice);
-          this.state.currentPrice.tesla = currPrice;
+
+          let newCurrentPrice = {...this.state.currentPrice};
+          newCurrentPrice.tesla = currPrice;
+          this.setState({ currPrice: newCurrentPrice });
         }
         catch(err) {
           console.log("err in parsing tesla websocket curr price", err);
@@ -169,19 +210,16 @@ export default class Home extends Component {
         symbol: "BINANCE:BTCUSDT",
         coinSelectedName: "bitcoin",
         type: "buyNow",
-        amount: 100,
+        amount: 5000,
         priceAt: null, //
         orderCompleted: true,
       };
     }
     
     if(this.state.currentPrice[order.coinSelectedName] === null) {
-      alert("Order can't be placed, current price not found for ", order.coinSelectedName);
+      alert("Order can't be placed, websocket not started, current price not found for ", order.coinSelectedName);
+      return;
     }
-    const setCoinHandler = (coin) => {
-      this.setState({ coinSelectedName: coin });
-      console.log(coin);
-    };
 
     // const setCoinHandler = (coin) => {
     //     this.setState({coinSelectedName:coin});
@@ -224,11 +262,11 @@ export default class Home extends Component {
         return;
     }
 
-    let allOrders = this.state.allOrders;
-    allOrders.push(order);
-    this.setState({ allOrders });
+    let newAllOrders = this.state.allOrders.slice();
+    newAllOrders.push(order);
+    this.setState({ allOrders: newAllOrders });
 
-    console.log("order are ", allOrders);
+    console.log("order that was added: ", order);
   };
 
   render() {

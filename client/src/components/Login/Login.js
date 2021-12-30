@@ -34,7 +34,7 @@ function Login(props) {
       console.log("login success user data: ", res.data.user);
 
       // save session to local storage
-      window.localStorage.setItem('loginData', JSON.stringify(res.data.user));
+      window.localStorage.setItem('userData', JSON.stringify(res.data.user));
 
       // redirect to /
       window.location.href = '/'; //relative to domain
