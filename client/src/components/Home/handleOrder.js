@@ -4,21 +4,23 @@ const handleBuyNow = (balance, holding, order, currentPrice) => {
   // 1. Reduce balance
   let newBalance = balance - order.amount;
 
+  
   // 2. Increase holding
+  let newHolding = {...holding};
 
   // orderAmt / priceOfEachCoin
   let newBoughtHolding = order.amount / currentPrice[order.coinSelectedName];
-
-  if (!holding[order.coinSelectedName]) {
+  
+  if (!newHolding[order.coinSelectedName]) {
     // first time buying that coin/stocks
-    holding[order.coinSelectedName] = newBoughtHolding;
+    newHolding[order.coinSelectedName] = newBoughtHolding;
   } else {
-    holding[order.coinSelectedName] += newBoughtHolding;
+    newHolding[order.coinSelectedName] += newBoughtHolding;
   }
 
   return {
     newBalance: newBalance,
-    newHolding: holding,
+    newHolding: newHolding,
   };
 };
 
