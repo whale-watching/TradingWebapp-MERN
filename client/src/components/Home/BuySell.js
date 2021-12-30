@@ -84,7 +84,7 @@ const style = {
 };
 
 export default function BuySell(props) {
-  console.log("\n\n\n\n was re rendered", props.totalAssetAmt);
+  // console.log("\n\n\n\n was re rendered", props.totalAssetAmt);
 
   let totalAssetColor = "white";
   if (props.lastTotalAssetChange === "negative") {
@@ -122,11 +122,11 @@ export default function BuySell(props) {
       type: orderType,
       amount: orderAmount,
       priceAt:
-        orderType == "buyAt"
+        orderType === "buyAt"
           ? buyAtAmount
-          : orderType == "sellAt"
+          : orderType === "sellAt"
           ? sellAtAmount
-          : orderType == "sortAt"
+          : orderType === "sortAt"
           ? sortAtAmount
           : 0,
       orderCompleted: true,
@@ -267,7 +267,7 @@ export default function BuySell(props) {
                 }}
               />
             </Stack>
-            {orderType == "buyAt" && (
+            {orderType === "buyAt" && (
               <Stack sx={style.stack} direction="row" spacing={2}>
                 <h3>Buy AT Price :</h3>
                 <TextField
@@ -347,7 +347,7 @@ export default function BuySell(props) {
                 }}
               />
             </Stack>
-            {orderType == "sortAt" && (
+            {orderType === "sortAt" && (
               <Stack sx={style.stack} direction="row" spacing={2}>
                 <h3>Sort AT Price :</h3>
                 <TextField
@@ -443,7 +443,7 @@ export default function BuySell(props) {
                 }}
               />
             </Stack>
-            {orderType == "sellAt" && (
+            {orderType === "sellAt" && (
               <Stack sx={style.stack} direction="row" spacing={2}>
                 <h3>Sell AT Price :</h3>
                 <TextField
