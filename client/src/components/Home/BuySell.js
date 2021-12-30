@@ -23,6 +23,10 @@ import {
   Radio,
 } from "@mui/material";
 
+import  {
+  numberWithCommas,
+} from "../../utils/miscUtil";
+
 //Modal Styles
 const style = {
   modal: {
@@ -121,7 +125,7 @@ export default function BuySell(props) {
       coinSelectedName: coin,
       type: orderType,
       amount: orderAmount,
-      priceAt:
+      executeWhenPriceAt:
         orderType === "buyAt"
           ? buyAtAmount
           : orderType === "sellAt"
@@ -170,7 +174,7 @@ export default function BuySell(props) {
                 <Typography display="inline">Total Assets: $ </Typography>
 
                 <Typography display="inline" style={{ color: totalAssetColor }}>
-                  {props.totalAssetAmt}
+                  {numberWithCommas(props.totalAssetAmt)}
                 </Typography>
               </>
             }
@@ -181,7 +185,7 @@ export default function BuySell(props) {
           <ListItemAvatar>
             <AccountBalanceWalletIcon fontSize="large" />
           </ListItemAvatar>
-          <ListItemText primary={`Balance  ${props.balance}`} />
+          <ListItemText primary={`Balance  ${numberWithCommas(props.balance)}`} />
         </ListItem>
 
         <ListItem>

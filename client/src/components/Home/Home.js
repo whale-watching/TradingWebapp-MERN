@@ -1,5 +1,6 @@
 import React, { Component, useState, useEffect } from "react";
 import { convertNameToTradingviewSybmol } from "../../utils/nameSymbol";
+import { getUpdatedTotalAssetAmt } from "../../utils/orderUtil"
 import "./Home.css";
 import { token } from "../../secret.js";
 import HeaderComp from "./HeaderComp";
@@ -60,57 +61,39 @@ export default class Home extends Component {
 
   
   componentDidUpdate(prevProps, prevState) {
-
     // console.log("in componentdidupdate", prevProps, prevState);
 
-
-    // update this.state.totalAssetAmt on price change
-    let newTotalAssetAmt = this.state.balance;
-    if(this.state.holding.bitcoin && this.state.currentPrice.bitcoin) {
-      newTotalAssetAmt += this.state.holding.bitcoin*this.state.currentPrice.bitcoin;
+    let newTotalAssetAmt = getUpdatedTotalAssetAmt(this.state.balance, this.state.holding, this.state.sortedHolding, this.state.currentPrice);
+    if(newTotalAssetAmt && this.state.totalAssetAmt !== newTotalAssetAmt) {
+      // this.setState({totalAssetAmt: newTotalAssetAmt}); 
+      this.state.totalAssetAmt = newTotalAssetAmt; // no setState() so as to avoid re render
+      // console.log("this.state.totalAssetAmt updated to ", this.state.totalAssetAmt);
     }
-    if(this.state.holding.ethereum && this.state.currentPrice.ethereum) {
-      newTotalAssetAmt += this.state.holding.ethereum*this.state.currentPrice.ethereum;
-    }
-    if(this.state.holding.dogecoin && this.state.currentPrice.dogecoin) {
-      newTotalAssetAmt += this.state.holding.dogecoin*this.state.currentPrice.dogecoin;
-    }
-    if(this.state.holding.tesla && this.state.currentPrice.tesla) {
-      newTotalAssetAmt += this.state.holding.tesla*this.state.currentPrice.tesla;
-    }
-    this.state.totalAssetAmt = newTotalAssetAmt; // no setState() so as to avoid re render
-
-    // console.log("this.state.totalAssetAmt updated to ", this.state.totalAssetAmt, typeof(this.state.totalAssetAmt));
-
 
     // update this.lastTotalAssetChange
     if(prevState.totalAssetAmt !== '') { // handle case for first time totalAssetAmt updation
-
-      clearTimeout(this.lastTotalAssetChangeTimeout);
-
       if(prevState.totalAssetAmt < this.state.totalAssetAmt) {
         // console.log("total asset increased ;) green");
+        clearTimeout(this.lastTotalAssetChangeTimeout);
         this.lastTotalAssetChange = 'positive';
-
         this.lastTotalAssetChangeTimeout = setTimeout(() => { this.lastTotalAssetChange = 'none'; }, 2000);
       }
 
       else if(prevState.totalAssetAmt > this.state.totalAssetAmt) {
         // console.log("total asset increased ;( red");
+        clearTimeout(this.lastTotalAssetChangeTimeout);
         this.lastTotalAssetChange = 'negative';
-
         this.lastTotalAssetChangeTimeout = setTimeout(() => { this.lastTotalAssetChange = 'none'; }, 1000);
       }
     }
 
 
     // only update the userData in the localStorage if any newOrder was placed i.e allOrders was changed
-    // console.log(JSON.stringify(prevState.allOrders), JSON.stringify(this.state.allOrders));
-
     if(JSON.stringify(prevState.allOrders) !== JSON.stringify(this.state.allOrders)) {
       let userData = {...this.state}; // all property of this.state except coinSelectedName, currentPrice
       delete userData.coinSelectedName;
       delete userData.currentPrice;
+      delete userData.totalAssetAmt;
 
       window.localStorage.setItem("userData", JSON.stringify(userData));
       console.log(" wrote to local storage", userData);
@@ -124,7 +107,7 @@ export default class Home extends Component {
       // console.log("userData got in localstorage", window.localStorage.getItem("userData"));
 
       let userDataLocalStorage = JSON.parse(window.localStorage.getItem("userData"));
-      console.log("userdata in localStorage", userDataLocalStorage);
+      // console.log("userdata in localStorage", userDataLocalStorage);
 
       if (userDataLocalStorage) {
         // console.log("this before , \n\n", this);
@@ -209,9 +192,10 @@ export default class Home extends Component {
       order = {
         symbol: "BINANCE:BTCUSDT",
         coinSelectedName: "bitcoin",
-        type: "buyNow",
+        type: "sortNow",
         amount: 5000,
-        priceAt: null, //
+        coinBought: 5000/this.state.currentPrice["bitcoin"],
+        // executeWhenPriceAt: null, //
         orderCompleted: true,
       };
     }
@@ -227,19 +211,27 @@ export default class Home extends Component {
     // }
 
     switch (order.type) {
-      case "buyNow":
+      case "buyNow": {
         const { newBalance, newHolding } = handleBuyNow(
           this.state.balance,
           this.state.holding,
           order,
-          this.state.currentPrice,
+          this.state.currentPrice
         );
         this.setState({ balance: newBalance, holding: newHolding });
         break;
+      }
 
-      case "sortNow":
-        //
+      case "sortNow": {
+        const { newBalance, newSortedHolding } = handleSortNow(
+          this.state.balance,
+          this.state.holding,
+          order,
+          this.state.currentPrice
+        );
+        this.setState({ balance: newBalance, sortedHolding: newSortedHolding });
         break;
+      }
 
       case "sellNow":
         //
@@ -276,7 +268,7 @@ export default class Home extends Component {
         <div className="Content">
           <Widget coinSelectedName={this.state.coinSelectedName} />
           <BuySell
-            totalAssetAmt={parseFloat(this.state.totalAssetAmt.toFixed(6))}
+            totalAssetAmt={parseFloat(this.state.totalAssetAmt.toFixed(4))}
             balance={this.state.balance}
             holding={this.state.holding}
             sortedHolding={this.state.sortedHolding}
