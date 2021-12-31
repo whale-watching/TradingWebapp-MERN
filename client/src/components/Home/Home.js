@@ -1,4 +1,5 @@
 import React, { Component, useState, useEffect } from "react";
+import axios from "axios";
 import { convertNameToTradingviewSybmol } from "../../utils/nameSymbol";
 import { getUpdatedTotalAssetAmt } from "../../utils/orderUtil"
 import "./Home.css";
@@ -9,8 +10,8 @@ import BuySell from "./BuySell";
 
 import {
   handleBuyNow,
-  handleBuyAt,
   handleSortNow,
+  handleBuyAt,
   handleSortAt,
   handleSellNow,
   handleSellAt,
@@ -20,12 +21,9 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
 
-    console.log("constr called");
-
     this.lastTotalAssetChange = 'none';
     this.lastTotalAssetChangeTimeout = null;
 
-    
     // default value of the state
     this.state = {
       userId: null, // random alpha numeric string of len 10
@@ -51,13 +49,14 @@ export default class Home extends Component {
 
     };
 
-    this.listenToUpdatedPriceWs();
-    this.executePrevCompletedOrders();
   }
 
 
   componentDidMount() {
     this.updateUserDataFromLocalStorage();// update the state if present in local storage else create a userId and save state to local storage
+    this.quickUpdateCurrentPriceUsingApi();
+    this.startUpdatingCurrentPriceUsingWebsocket();
+    this.executePrevCompletedOrders();
   }
 
   
@@ -105,22 +104,15 @@ export default class Home extends Component {
 
   updateUserDataFromLocalStorage() {
     try {
-      // console.log("userData got in localstorage", window.localStorage.getItem("userData"));
-
       let userDataLocalStorage = JSON.parse(window.localStorage.getItem("userData"));
       // console.log("userdata in localStorage", userDataLocalStorage);
 
       if (userDataLocalStorage) {
-        // console.log("this before , \n\n", this);
-
         const {userId, email, name, balance, holding, sortedHolding, allOrders} = userDataLocalStorage;
         this.setState({userId, email, name, balance, holding, sortedHolding, allOrders});
         // console.log("updated from localStorage to ", userId, email, name, balance, holding, sortedHolding, allOrders);
-
-        // this.setState({ balance: 5 }, () => {
-        //   console.log("\n\n\n", this.state.balance, 'balance');
-        // }); 
       }
+
     }
     catch(err) {
       console.log("cant read userData from local storage",err);
@@ -129,8 +121,78 @@ export default class Home extends Component {
 
   }
 
+  quickUpdateCurrentPriceUsingApi() {
+
+    // bitcoin
+    var config = {
+      method: 'get',
+      url: 'https://api.coincap.io/v2/rates/bitcoin',
+      headers: { }, 
+      raxConfig: {
+        retry: 3,
+        retryDelay: 500
+      }
+    };
+    axios(config)
+    .then(function (response) {
+      // console.log('\n\n\n got bitcoin price from api', response.data.data.rateUsd);
+      const price = response.data.data.rateUsd;
+      let updatedCurrentPrice = {...this.state.currentPrice};
+      updatedCurrentPrice.bitcoin = price;
+      this.setState({currentPrice: updatedCurrentPrice});
+    }.bind(this))
+    .catch(function (error) {
+      console.log("error updating currentPrice of bitcoin by API", error);
+    });
+
+    // ethereum
+    var config = {
+      method: 'get',
+      url: 'https://api.coincap.io/v2/rates/ethereum',
+      headers: { }, 
+      raxConfig: {
+        retry: 3,
+        retryDelay: 500
+      }
+    };
+    axios(config)
+    .then(function (response) {
+      // console.log('\n\n\n got ethereum price from api', response.data.data.rateUsd);
+      const price = response.data.data.rateUsd;
+      let updatedCurrentPrice = {...this.state.currentPrice};
+      updatedCurrentPrice.ethereum = price;
+      this.setState({currentPrice: updatedCurrentPrice});
+    }.bind(this))
+    .catch(function (error) {
+      console.log("error updating ethereum currentPrice by API", error);
+    });
+
+    // dogecoin
+    var config = {
+      method: 'get',
+      url: 'https://api.coincap.io/v2/rates/dogecoin',
+      headers: { }, 
+      raxConfig: {
+        retry: 3,
+        retryDelay: 500
+      }
+    };
+    axios(config)
+    .then(function (response) {
+      // console.log('\n\n\n dogecoin price got from api:', response.data.data.rateUsd);
+      const price = response.data.data.rateUsd;
+      let updatedCurrentPrice = {...this.state.currentPrice};
+      updatedCurrentPrice.dogecoin = price;
+      this.setState({currentPrice: updatedCurrentPrice});
+    }.bind(this))
+    .catch(function (error) {
+      console.log("error updating currentPrice by API", error);
+    });
+
+  }
+
   // updated the this.state.currentPrice, user details whenever we get a new current price
-  listenToUpdatedPriceWs() {
+  startUpdatingCurrentPriceUsingWebsocket() {
 
     // 1. websocket listener for bitcoin, etherium, dogecoin
 
@@ -154,27 +216,26 @@ export default class Home extends Component {
 
     // 2. websocket listener for tesla
 
-    const socket = new WebSocket(`wss://ws.finnhub.io?token=${token}`);
-
-    socket.addEventListener('open', function (event) {
-      socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'BINANCE:ETHUSDT'}))
-    });
+    // const socket = new WebSocket(`wss://ws.finnhub.io?token=${token}`);
+    // socket.addEventListener('open', function (event) {
+    //   socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'BINANCE:ETHUSDT'}))
+    // });
     
-    // Listen for messages
-    socket.addEventListener('message', function (event) {
-        // console.log('Message from server ', event.data);
-        try {
-          const currPrice = JSON.parse(event.data).data[0].p;
-          // console.log(currPrice);
+    // // Listen for messages
+    // socket.addEventListener('message', function (event) {
+    //     // console.log('Message from server ', event.data);
+    //     try {
+    //       const currPrice = JSON.parse(event.data).data[0].p;
+    //       // console.log(currPrice);
 
-          let newCurrentPrice = {...this.state.currentPrice};
-          newCurrentPrice.tesla = currPrice;
-          this.setState({ currPrice: newCurrentPrice });
-        }
-        catch(err) {
-          console.log("err in parsing tesla websocket curr price", err);
-        }
-    }.bind(this));
+    //       let newCurrentPrice = {...this.state.currentPrice};
+    //       newCurrentPrice.tesla = currPrice;
+    //       this.setState({ currentPrice: newCurrentPrice });
+    //     }
+    //     catch(err) {
+    //       console.log("err in parsing tesla websocket curr price", err);
+    //     }
+    // }.bind(this));
 
   }
 

@@ -27,12 +27,11 @@ const getUpdatedTotalAssetAmt = (balance, holding, sortedHolding, currentPrice) 
 
 	// handle holding
 	for(let coinName in holding) {
-		// console.log("in holding loop");
 		if(currentPrice[coinName]) {
 			newTotalAssetAmt += holding[coinName] * currentPrice[coinName];
 		}
 		else {
-			console.log(`currentPrice for coin "${coinName}" was not updated yet, cant get newTotalAssetAmt `); 
+			// console.log(`currentPrice for coin "${coinName}" was not updated yet, cant get newTotalAssetAmt `); 
 			return null;
 		}
 	}
@@ -51,7 +50,7 @@ const getUpdatedTotalAssetAmt = (balance, holding, sortedHolding, currentPrice) 
 			}
 		}
 		else {
-			console.log(`currentPrice for coin "${coinName}" was not updated yet, cant get newTotalAssetAmt `); 
+			// console.log(`currentPrice for coin "${coinName}" was not updated yet, cant get newTotalAssetAmt `); 
 			return null;
 		}
 	}
