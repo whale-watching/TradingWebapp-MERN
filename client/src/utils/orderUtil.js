@@ -27,7 +27,7 @@ const getUpdatedTotalAssetAmt = (balance, holding, sortedHolding, currentPrice) 
 
 	// handle holding
 	for(let coinName in holding) {
-		console.log("in holding loop");
+		// console.log("in holding loop");
 		if(currentPrice[coinName]) {
 			newTotalAssetAmt += holding[coinName] * currentPrice[coinName];
 		}

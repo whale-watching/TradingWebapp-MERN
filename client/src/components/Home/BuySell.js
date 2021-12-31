@@ -118,6 +118,36 @@ export default function BuySell(props) {
   const [sellAtAmount, setSellAtAmount] = useState(0);
   const [sortAtAmount, setSortAtAmount] = useState(0);
 
+  const handleBuyOrderClick = () => {
+    console.log("clicked on buy");
+    let order = {
+      sybmol: convertNameToTradingviewSybmol(coin),
+      coinSelectedName: coin,
+      type: orderType,
+      amount: orderAmount,
+      executeWhenPriceAt: buyAtAmount,
+      orderCompleted: true,
+    };
+    props.placeOrder(order);
+  }
+
+  const handleSortOrderClick = () => {
+    console.log("clicked on sort");
+    let order = {
+      sybmol: convertNameToTradingviewSybmol(props.coinSelectedName),
+      coinSelectedName: props.coinSelectedName,
+      type: orderType,
+      amount: orderAmount,
+      executeWhenPriceAt: sellAtAmount,
+      orderCompleted: true,
+    };
+    props.placeOrder(order);
+  }
+
+  const handleSellModalClick = () => {
+
+  }
+
   const Order = () => {
     console.log(orderAmount);
     let order = {
@@ -138,6 +168,14 @@ export default function BuySell(props) {
     props.placeOrder(order);
   };
 
+  const getFormatedTotalAssetAmt = (totalAssetAmt) => {
+    if(totalAssetAmt === '') {
+       return '';
+    }
+    else {
+     return numberWithCommas(parseFloat(totalAssetAmt.toFixed(6)));
+    }
+  }
   return (
     <div className="BuySell-div">
       <div className="Dropdown">
@@ -174,7 +212,7 @@ export default function BuySell(props) {
                 <Typography display="inline">Total Assets: $ </Typography>
 
                 <Typography display="inline" style={{ color: totalAssetColor }}>
-                  {numberWithCommas(props.totalAssetAmt)}
+                  {getFormatedTotalAssetAmt(props.totalAssetAmt)}
                 </Typography>
               </>
             }
@@ -185,7 +223,7 @@ export default function BuySell(props) {
           <ListItemAvatar>
             <AccountBalanceWalletIcon fontSize="large" />
           </ListItemAvatar>
-          <ListItemText primary={`Balance  ${numberWithCommas(props.balance)}`} />
+          <ListItemText primary={`Balance: $ ${numberWithCommas(props.balance)}`} />
         </ListItem>
 
         <ListItem>
@@ -195,7 +233,7 @@ export default function BuySell(props) {
             </ListItemAvatar>
           </ListItemAvatar>
           <ListItemText
-            primary={`Holdings  ${JSON.stringify(props.holding)}`}
+            primary={`Holdings: ${JSON.stringify(props.holding)}`}
           />
         </ListItem>
 
@@ -219,7 +257,7 @@ export default function BuySell(props) {
           onClick={() => {
             handleBuyOpen();
             setOrderType("buyNow");
-            props.placeOrder(null);
+            // props.placeOrder(null);
           }}
           className="button green-button"
         >
@@ -287,7 +325,7 @@ export default function BuySell(props) {
                 />
               </Stack>
             )}
-            <button className="button green-button" onClick={Order}>
+            <button className="button green-button" onClick={handleBuyOrderClick}>
               <span>Buy</span>
             </button>
           </Box>
@@ -367,7 +405,7 @@ export default function BuySell(props) {
                 />
               </Stack>
             )}
-            <button className="button blue-button" onClick={Order}>
+            <button className="button blue-button" onClick={handleSortOrderClick}>
               <span>Sort</span>
             </button>
           </Box>
@@ -463,7 +501,7 @@ export default function BuySell(props) {
                 />
               </Stack>
             )}
-            <button className="button red-button" onClick={Order}>
+            <button className="button red-button" onClick={handleSellModalClick}>
               <span>Sell</span>
             </button>
           </Box>

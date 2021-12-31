@@ -25,13 +25,14 @@ export default class Home extends Component {
     this.lastTotalAssetChange = 'none';
     this.lastTotalAssetChangeTimeout = null;
 
+    
     // default value of the state
     this.state = {
       userId: null, // random alpha numeric string of len 10
       email: null,
       name: null,
 
-      totalAssetAmt: 10000,
+      totalAssetAmt: '',
       balance: 10000,
 
       holding: {},
@@ -201,7 +202,7 @@ export default class Home extends Component {
     }
     
     if(this.state.currentPrice[order.coinSelectedName] === null) {
-      alert("Order can't be placed, websocket not started, current price not found for ", order.coinSelectedName);
+      alert(`Order can't be placed websocket is not ready yet for the stock: ${order.coinSelectedName}`);
       return;
     }
 
@@ -223,9 +224,10 @@ export default class Home extends Component {
       }
 
       case "sortNow": {
+        order.coinBought = order.amount/this.state.currentPrice[order.coinSelectedName];
         const { newBalance, newSortedHolding } = handleSortNow(
           this.state.balance,
-          this.state.holding,
+          this.state.sortedHolding,
           order,
           this.state.currentPrice
         );
@@ -268,12 +270,14 @@ export default class Home extends Component {
         <div className="Content">
           <Widget coinSelectedName={this.state.coinSelectedName} />
           <BuySell
-            totalAssetAmt={parseFloat(this.state.totalAssetAmt.toFixed(4))}
+            totalAssetAmt={this.state.totalAssetAmt}
             balance={this.state.balance}
             holding={this.state.holding}
             sortedHolding={this.state.sortedHolding}
             lastTotalAssetChange={this.lastTotalAssetChange}
             placeOrder={this.placeOrder}
+            currentPrice={this.state.currentPrice}
+            coinSelectedName={this.state.coinSelectedName}
             onChange={(value) => this.setState({ coinSelectedName: value })}
           />
         </div>
