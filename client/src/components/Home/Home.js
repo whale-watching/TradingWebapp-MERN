@@ -78,7 +78,7 @@ export default class Home extends Component {
         clearTimeout(this.lastTotalAssetChangeTimeout);
         this.setState({lastTotalAssetChange: 'positive'});
         // this.lastTotalAssetChange = 'positive';
-        this.lastTotalAssetChangeTimeout = setTimeout(() => { this.setState({lastTotalAssetChange: 'none'}); }, 2000);
+        this.lastTotalAssetChangeTimeout = setTimeout(() => { this.setState({lastTotalAssetChange: 'none'}); }, 1500);
       }
 
       else if(prevState.totalAssetAmt > this.state.totalAssetAmt) {
@@ -86,7 +86,7 @@ export default class Home extends Component {
         clearTimeout(this.lastTotalAssetChangeTimeout);
         this.setState({lastTotalAssetChange: 'negative'});
         // this.lastTotalAssetChange = 'negative';
-        this.lastTotalAssetChangeTimeout = setTimeout(() => { this.setState({lastTotalAssetChange: 'none'}); }, 1000);
+        this.lastTotalAssetChangeTimeout = setTimeout(() => { this.setState({lastTotalAssetChange: 'none'}); }, 1500);
       }
     }
 

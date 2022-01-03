@@ -23,9 +23,7 @@ import {
   Radio,
 } from "@mui/material";
 
-import  {
-  numberWithCommas,
-} from "../../utils/miscUtil";
+import { numberWithCommas } from "../../utils/miscUtil";
 
 //Modal Styles
 const style = {
@@ -129,7 +127,7 @@ export default function BuySell(props) {
       orderCompleted: true,
     };
     props.placeOrder(order);
-  }
+  };
 
   const handleSortOrderClick = () => {
     console.log("clicked on sort");
@@ -142,11 +140,9 @@ export default function BuySell(props) {
       orderCompleted: true,
     };
     props.placeOrder(order);
-  }
+  };
 
-  const handleSellModalClick = () => {
-
-  }
+  const handleSellModalClick = () => {};
 
   const Order = () => {
     console.log(orderAmount);
@@ -168,14 +164,60 @@ export default function BuySell(props) {
     props.placeOrder(order);
   };
 
-  const getFormatedTotalAssetAmt = (totalAssetAmt) => {
-    if(totalAssetAmt === '') {
-       return '';
+  const getFormatedPrice = (totalAssetAmt, digitsAfterDecimal=6) => {
+    if (totalAssetAmt === "") {
+      return "";
+    } else {
+      return numberWithCommas(parseFloat(totalAssetAmt.toFixed(digitsAfterDecimal)));
     }
-    else {
-     return numberWithCommas(parseFloat(totalAssetAmt.toFixed(6)));
+  };
+
+  const getFormatedHolding = (holding) => {
+    let formatedHolding = ``;
+
+    if (!holding) return formatedHolding;
+
+    formatedHolding += `\n\n`;
+
+    for (let coinName in holding) {
+      formatedHolding += coinName;
+      formatedHolding += `: $`;
+      formatedHolding += getFormatedPrice(holding[coinName]*props.currentPrice[coinName], 2);
+      formatedHolding += `\n`;
     }
+
+    return formatedHolding;
+  };
+
+  const getFormatedSortedHolding = (sortedHolding) => {
+    let formatedSortedHolding = ``;
+
+    if(! sortedHolding) return formatedSortedHolding;
+
+    for(let coinName in sortedHolding) {
+      if(props.currentPrice[coinName]) {
+  
+        formatedSortedHolding += coinName;
+        formatedSortedHolding += `: $ `;
+
+        let currentCoinAmt = 0;// total amount of coins own
+        let currentCoinWorth = 0; // price of the coin own;
+
+        for(let sortedHoldingOrder of sortedHolding[coinName]) {
+          // worthThen + (worthThen - currentWorth) = 2*worthThen - currentWorth
+          currentCoinAmt += sortedHoldingOrder.amount;
+          currentCoinWorth += 2*(sortedHoldingOrder.amount) - (sortedHoldingOrder.coinBought*props.currentPrice[coinName]);
+        }
+
+        // formatedSortedHolding += '';
+        formatedSortedHolding += getFormatedPrice(currentCoinWorth, 2);
+        formatedSortedHolding += '\n';
+      }
+    }
+
+    return formatedSortedHolding;
   }
+
   return (
     <div className="BuySell-div">
       <div className="Dropdown">
@@ -212,7 +254,7 @@ export default function BuySell(props) {
                 <Typography display="inline">Total Assets: $ </Typography>
 
                 <Typography display="inline" style={{ color: totalAssetColor }}>
-                  {getFormatedTotalAssetAmt(props.totalAssetAmt)}
+                  {getFormatedPrice(props.totalAssetAmt)}
                 </Typography>
               </>
             }
@@ -223,17 +265,8 @@ export default function BuySell(props) {
           <ListItemAvatar>
             <AccountBalanceWalletIcon fontSize="large" />
           </ListItemAvatar>
-          <ListItemText primary={`Balance: $ ${numberWithCommas(props.balance)}`} />
-        </ListItem>
-
-        <ListItem>
-          <ListItemAvatar>
-            <ListItemAvatar>
-              <CottageIcon fontSize="large" />
-            </ListItemAvatar>
-          </ListItemAvatar>
           <ListItemText
-            primary={`Holdings: ${JSON.stringify(props.holding)}`}
+            primary={`Balance: $ ${numberWithCommas(props.balance)}`}
           />
         </ListItem>
 
@@ -243,8 +276,36 @@ export default function BuySell(props) {
               <CottageIcon fontSize="large" />
             </ListItemAvatar>
           </ListItemAvatar>
+
+          <ListItemText primary={`Holdings: `} />
+        </ListItem>
+
+        <ListItem>
+          <ListItemAvatar>
+            <ListItemAvatar></ListItemAvatar>
+          </ListItemAvatar>
+
+          <ListItemText primary={`${getFormatedHolding(props.holding)} `} />
+        </ListItem>
+
+        <ListItem>
+          <ListItemAvatar>
+            <ListItemAvatar>
+              <CottageIcon fontSize="large" />
+            </ListItemAvatar>
+          </ListItemAvatar>
           <ListItemText
-            primary={`Sorted Holdings  ${JSON.stringify(props.sortedHolding)}`}
+            primary={`Sorted Holdings`}
+          />
+        </ListItem>
+
+        <ListItem>
+          <ListItemAvatar>
+            <ListItemAvatar>
+            </ListItemAvatar>
+          </ListItemAvatar>
+          <ListItemText
+            primary={`${getFormatedSortedHolding(props.sortedHolding)}`}
           />
         </ListItem>
       </List>
@@ -325,7 +386,10 @@ export default function BuySell(props) {
                 />
               </Stack>
             )}
-            <button className="button green-button" onClick={handleBuyOrderClick}>
+            <button
+              className="button green-button"
+              onClick={handleBuyOrderClick}
+            >
               <span>Buy</span>
             </button>
           </Box>
@@ -405,7 +469,10 @@ export default function BuySell(props) {
                 />
               </Stack>
             )}
-            <button className="button blue-button" onClick={handleSortOrderClick}>
+            <button
+              className="button blue-button"
+              onClick={handleSortOrderClick}
+            >
               <span>Sort</span>
             </button>
           </Box>
@@ -501,7 +568,10 @@ export default function BuySell(props) {
                 />
               </Stack>
             )}
-            <button className="button red-button" onClick={handleSellModalClick}>
+            <button
+              className="button red-button"
+              onClick={handleSellModalClick}
+            >
               <span>Sell</span>
             </button>
           </Box>
