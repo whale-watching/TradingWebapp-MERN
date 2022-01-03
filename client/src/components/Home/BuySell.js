@@ -95,7 +95,7 @@ export default function BuySell(props) {
     totalAssetColor = "#32CD32";
   }
 
-  const [coin, setCoin] = React.useState("");
+  const [coin, setCoin] = React.useState("bitcoin");
   const handleChange = (event) => {
     setCoin(event.target.value);
     props.onChange(event.target.value);
@@ -357,7 +357,7 @@ export default function BuySell(props) {
               </FormControl>
             </Stack>
             <Stack sx={style.stack} direction="row" spacing={2}>
-              <h3>Buy Quantity :</h3>
+              <h3>Buy Amount :</h3>
               <TextField
                 sx={style.textBox}
                 value={orderAmount}
@@ -440,7 +440,7 @@ export default function BuySell(props) {
               </FormControl>
             </Stack>
             <Stack sx={style.stack} direction="row" spacing={2}>
-              <h3>Sort Quantity :</h3>
+              <h3>Sort Amount :</h3>
               <TextField
                 sx={style.textBox}
                 value={orderAmount}
@@ -541,7 +541,7 @@ export default function BuySell(props) {
               </FormControl>
             </Stack>
             <Stack sx={style.stack} direction="row" spacing={2}>
-              <h3>Sell Quantity :</h3>
+              <h3>Sell Amount :</h3>
               <TextField
                 sx={style.textBox}
                 id="outlined-basic"
