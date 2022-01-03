@@ -21,7 +21,6 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
 
-    this.lastTotalAssetChange = 'none';
     this.lastTotalAssetChangeTimeout = null;
 
     // default value of the state
@@ -29,6 +28,8 @@ export default class Home extends Component {
       userId: null, // random alpha numeric string of len 10
       email: null,
       name: null,
+
+      lastTotalAssetChange: 'none',
 
       totalAssetAmt: '',
       balance: 10000,
@@ -70,20 +71,22 @@ export default class Home extends Component {
       // console.log("this.state.totalAssetAmt updated to ", this.state.totalAssetAmt);
     }
 
-    // update this.lastTotalAssetChange
+    // update this.state.lastTotalAssetChange
     if(prevState.totalAssetAmt !== '') { // handle case for first time totalAssetAmt updation
       if(prevState.totalAssetAmt < this.state.totalAssetAmt) {
         // console.log("total asset increased ;) green");
         clearTimeout(this.lastTotalAssetChangeTimeout);
-        this.lastTotalAssetChange = 'positive';
-        this.lastTotalAssetChangeTimeout = setTimeout(() => { this.lastTotalAssetChange = 'none'; }, 2000);
+        this.setState({lastTotalAssetChange: 'positive'});
+        // this.lastTotalAssetChange = 'positive';
+        this.lastTotalAssetChangeTimeout = setTimeout(() => { this.setState({lastTotalAssetChange: 'none'}); }, 2000);
       }
 
       else if(prevState.totalAssetAmt > this.state.totalAssetAmt) {
         // console.log("total asset increased ;( red");
         clearTimeout(this.lastTotalAssetChangeTimeout);
-        this.lastTotalAssetChange = 'negative';
-        this.lastTotalAssetChangeTimeout = setTimeout(() => { this.lastTotalAssetChange = 'none'; }, 1000);
+        this.setState({lastTotalAssetChange: 'negative'});
+        // this.lastTotalAssetChange = 'negative';
+        this.lastTotalAssetChangeTimeout = setTimeout(() => { this.setState({lastTotalAssetChange: 'none'}); }, 1000);
       }
     }
 
@@ -335,7 +338,7 @@ export default class Home extends Component {
             balance={this.state.balance}
             holding={this.state.holding}
             sortedHolding={this.state.sortedHolding}
-            lastTotalAssetChange={this.lastTotalAssetChange}
+            lastTotalAssetChange={this.state.lastTotalAssetChange}
             placeOrder={this.placeOrder}
             currentPrice={this.state.currentPrice}
             coinSelectedName={this.state.coinSelectedName}
