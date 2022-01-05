@@ -41,7 +41,7 @@ const style = {
   },
   list: {
     width: "100%",
-    height: "50%",
+    height: "70%",
     maxWidth: 360,
     color: "white",
     bgcolor: "black",
@@ -186,7 +186,14 @@ export default function BuySell(props) {
       formatedHolding += `\n`;
     }
 
-    return formatedHolding;
+    // return formatedHolding;
+    return (
+      <div style={{ marginTop: "-10px" }}>
+        {formatedHolding.split(/\n/).map((line) => (
+          <div>{line}</div>
+        ))}
+      </div>
+    );
   };
 
   const getFormatedSortedHolding = (sortedHolding) => {
@@ -215,9 +222,15 @@ export default function BuySell(props) {
       }
     }
 
-    return formatedSortedHolding;
+    // return formatedSortedHolding;
+    return (
+      <div style={{ marginTop : "-10px" }}>
+        {formatedSortedHolding.split(/\n/).map((line) => (
+          <div>{line}</div>
+        ))}
+      </div>
+    );
   }
-
   return (
     <div className="BuySell-div">
       <div className="Dropdown">
@@ -284,8 +297,8 @@ export default function BuySell(props) {
           <ListItemAvatar>
             <ListItemAvatar></ListItemAvatar>
           </ListItemAvatar>
-
-          <ListItemText primary={`${getFormatedHolding(props.holding)} `} />
+          {getFormatedHolding(props.holding)}
+          {/* <ListItemText primary={`${getFormatedHolding(props.holding)} `} /> */}
         </ListItem>
 
         <ListItem>
@@ -294,20 +307,18 @@ export default function BuySell(props) {
               <CottageIcon fontSize="large" />
             </ListItemAvatar>
           </ListItemAvatar>
-          <ListItemText
-            primary={`Sorted Holdings`}
-          />
+          <ListItemText primary={`Sorted Holdings`} />
         </ListItem>
 
         <ListItem>
           <ListItemAvatar>
-            <ListItemAvatar>
-            </ListItemAvatar>
+            <ListItemAvatar></ListItemAvatar>
           </ListItemAvatar>
-          <ListItemText
+          {getFormatedSortedHolding(props.sortedHolding)}
+          {/* <ListItemText
             primary={`${getFormatedSortedHolding(props.sortedHolding)}`}
-          />
-        </ListItem>
+          /> */}
+        </ListItem> 
       </List>
 
       {/*Buy Sell Sort Buttons Row Starts here*/}

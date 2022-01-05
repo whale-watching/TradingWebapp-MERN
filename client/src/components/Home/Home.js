@@ -3,7 +3,6 @@ import axios from "axios";
 import { convertNameToTradingviewSybmol } from "../../utils/nameSymbol";
 import { getUpdatedTotalAssetAmt } from "../../utils/orderUtil"
 import "./Home.css";
-import { token } from "../../secret.js";
 import HeaderComp from "./HeaderComp";
 import Widget from "./Widget";
 import BuySell from "./BuySell";
