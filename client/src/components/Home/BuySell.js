@@ -136,13 +136,24 @@ export default function BuySell(props) {
       coinSelectedName: props.coinSelectedName,
       type: orderType,
       amount: orderAmount,
-      executeWhenPriceAt: sellAtAmount,
+      executeWhenPriceAt: sortAtAmount,
       orderCompleted: true,
     };
     props.placeOrder(order);
   };
 
-  const handleSellModalClick = () => {};
+  const handleSellModalClick = () => {
+    console.log("clicked on sell");
+    let order = {
+      sybmol: convertNameToTradingviewSybmol(coin),
+      coinSelectedName: coin,
+      type: orderType,
+      amount: orderAmount,
+      executeWhenPriceAt: sellAtAmount,
+      orderCompleted: true,
+    };
+    props.placeOrder(order);
+  };
 
   const Order = () => {
     console.log(orderAmount);

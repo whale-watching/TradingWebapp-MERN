@@ -299,7 +299,13 @@ export default class Home extends Component {
       }
 
       case "sellNow":
-        //
+        const { newBalance, newHolding } = handleSellNow(
+          this.state.balance,
+          this.state.holding,
+          order,
+          this.state.currentPrice
+        );
+        this.setState({ balance: newBalance, holding: newHolding });
         break;
 
       case "buyAt":

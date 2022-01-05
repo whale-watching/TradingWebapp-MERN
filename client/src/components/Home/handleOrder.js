@@ -54,7 +54,32 @@ const handleSortNow = (balance, sortedHolding, order, currentPrice) => {
   };
 };
 
-const handleSellNow = (balance, holding, sortedHolding, order) => {};
+const handleSellNow = (balance, holding, order , currentPrice) => {
+
+    //Calculating current price of the coin to be sold.
+   let newSellHolding = order.amount / currentPrice[order.coinSelectedName];
+
+   let newHolding = { ...holding };
+
+   let newBalance = balance;
+
+   if (newHolding[order.coinSelectedName] >= newSellHolding) {
+     // selling that coin/stocks
+     newHolding[order.coinSelectedName] -= newSellHolding;
+     newBalance = balance + order.amount;
+   } else {
+     window.alert("Not enough holdings");
+   }
+    //If holdings are 0 delete the coin from holdings
+   if (newHolding[order.coinSelectedName] == 0) {
+     delete newHolding[order.coinSelectedName];
+   }
+   
+   return {
+     newBalance: newBalance,
+     newHolding: newHolding,
+   };
+};
 
 const handleBuyAt = (balance, holding, order) => {};
 
