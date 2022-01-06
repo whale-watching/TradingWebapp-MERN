@@ -3,7 +3,6 @@ import axios from "axios";
 import { convertNameToTradingviewSybmol } from "../../utils/nameSymbol";
 import { getUpdatedTotalAssetAmt } from "../../utils/orderUtil"
 import "./Home.css";
-import { token } from "../../secret.js";
 import HeaderComp from "./HeaderComp";
 import Widget from "./Widget";
 import BuySell from "./BuySell";
@@ -300,7 +299,13 @@ export default class Home extends Component {
       }
 
       case "sellNow":
-        //
+        const { newBalance, newHolding } = handleSellNow(
+          this.state.balance,
+          this.state.holding,
+          order,
+          this.state.currentPrice
+        );
+        this.setState({ balance: newBalance, holding: newHolding });
         break;
 
       case "buyAt":
