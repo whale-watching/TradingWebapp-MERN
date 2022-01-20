@@ -112,9 +112,9 @@ export default function BuySell(props) {
   //Buys Sell data states
   const [orderType, setOrderType] = useState("");
   const [orderAmount, setOrderAmount] = useState(0);
-  const [buyAtAmount, setBuyAtAmount] = useState(0);
-  const [sellAtAmount, setSellAtAmount] = useState(0);
-  const [sortAtAmount, setSortAtAmount] = useState(0);
+  const [buyAtAmount, setBuyAtAmount] = useState(null);
+  const [sellAtAmount, setSellAtAmount] = useState(null);
+  const [sortAtAmount, setSortAtAmount] = useState(null);
 
   const handleBuyOrderClick = () => {
     console.log("clicked on buy");
@@ -124,7 +124,7 @@ export default function BuySell(props) {
       type: orderType,
       amount: Number(orderAmount),
       executeWhenPriceAt: Number(buyAtAmount),
-      orderCompleted: true,
+      orderCompleted: buyAtAmount ? false: true,
     };
     props.placeOrder(order);
   };
@@ -137,7 +137,7 @@ export default function BuySell(props) {
       type: orderType,
       amount: Number(orderAmount),
       executeWhenPriceAt: Number(sortAtAmount),
-      orderCompleted: true,
+      orderCompleted: sortAtAmount ? false: true,
     };
     props.placeOrder(order);
   };
@@ -150,7 +150,7 @@ export default function BuySell(props) {
       type: orderType,
       amount: Number(orderAmount),
       executeWhenPriceAt: Number(sellAtAmount),
-      orderCompleted: true,
+      orderCompleted: sellAtAmount ? false: true,
     };
     props.placeOrder(order);
   };

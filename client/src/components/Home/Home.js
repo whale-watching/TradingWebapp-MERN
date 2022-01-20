@@ -1,7 +1,7 @@
 import React, { Component, useState, useEffect } from "react";
 import axios from "axios";
 import { convertNameToTradingviewSybmol } from "../../utils/nameSymbol";
-import { getUpdatedTotalAssetAmt } from "../../utils/orderUtil"
+import { getUpdatedTotalAssetAmt, executePrevCompletedOrders } from "../../utils/orderUtil"
 import "./Home.css";
 import HeaderComp from "./HeaderComp";
 import Widget from "./Widget";
@@ -53,11 +53,11 @@ export default class Home extends Component {
   }
 
 
-  componentDidMount() {
-    this.updateUserDataFromLocalStorage();// update the state if present in local storage else create a userId and save state to local storage
+  async componentDidMount() {
     this.quickUpdateCurrentPriceUsingApi();
     this.startUpdatingCurrentPriceUsingWebsocket();
-    this.executePrevCompletedOrders();
+    await this.updateUserDataFromLocalStorage();// update the state if present in local storage else create a userId and save state to local storage
+    this.updatePrevCompletedOrders();
   }
 
   
@@ -105,7 +105,7 @@ export default class Home extends Component {
   }
 
 
-  updateUserDataFromLocalStorage() {
+  async updateUserDataFromLocalStorage() {
     try {
       let userDataLocalStorage = JSON.parse(window.localStorage.getItem("userData"));
       // console.log("userdata in localStorage", userDataLocalStorage);
@@ -242,38 +242,52 @@ export default class Home extends Component {
 
   }
 
-  executePrevCompletedOrders() {
-    // itterate through allOrders[] check if any previous order was completed
+  getCurrentPrice = () => {
+    return this.state.currentPrice;
   }
+
+  updatePrevCompletedOrders = async () => {
+
+    // console.log("got data when updatePrevOrder", this.state);
+
+    const { newBalance, newHolding, newSortedHolding, updatedAllOrders } = await executePrevCompletedOrders(
+      this.state.allOrders,
+      this.state.balance,
+      this.state.holding,
+      this.state.sortedHolding,
+      this.getCurrentPrice
+    );
+
+    console.log(newBalance, newHolding, newSortedHolding, updatedAllOrders);
+    this.setState({balance: newBalance, holding: newHolding, sortedHolding:newSortedHolding, allOrders: updatedAllOrders});
+  }
+
 
   // called by the child class BuySell whenever user clicks on buy,sort or sell
   placeOrder = (order) => {
     // update totalAsset, holding, allOrders
     console.log("order got at Home.js", order);
 
-    if (order === null) {
-      // for testing only
-      console.log("updating order to default");
-      order = {
-        symbol: "BINANCE:BTCUSDT",
-        coinSelectedName: "bitcoin",
-        type: "sortNow",
-        amount: 5000,
-        coinBought: 5000/this.state.currentPrice["bitcoin"],
-        // executeWhenPriceAt: null, //
-        orderCompleted: true,
-      };
-    }
+    //   // for testing only
+    // if (order === null) {
+    //   console.log("updating order to default");
+    //   order = {
+    //     symbol: "BINANCE:BTCUSDT",
+    //     coinSelectedName: "bitcoin",
+    //     type: "sortNow",
+    //     amount: 5000,
+    //     coinBought: 5000/this.state.currentPrice["bitcoin"],
+    //     // executeWhenPriceAt: null, //
+    //     orderCompleted: true,
+    //   };
+    // }
     
     if(this.state.currentPrice[order.coinSelectedName] === null) {
       alert(`Order can't be placed websocket is not ready yet for the stock: ${order.coinSelectedName}`);
       return;
     }
 
-    // const setCoinHandler = (coin) => {
-    //     this.setState({coinSelectedName:coin});
-    //     console.log(coin);
-    // }
+    order.priceWhenOrderWasPlaced = Number(this.state.currentPrice[order.coinSelectedName]);
 
     switch (order.type) {
       case "buyNow": {
@@ -327,10 +341,14 @@ export default class Home extends Component {
     }
 
     let newAllOrders = this.state.allOrders.slice();
-    newAllOrders.push(order);
+    let tempOrder = {...order};
+    console.log("tempORder", tempOrder);
+    tempOrder.time = Date.now();
+    newAllOrders.push(tempOrder);
+    // console.log("new orer", newAllOrders);
     this.setState({ allOrders: newAllOrders });
 
-    console.log("order that was added: ", order);
+    console.log("order that was added: ", tempOrder);
   };
 
   render() {

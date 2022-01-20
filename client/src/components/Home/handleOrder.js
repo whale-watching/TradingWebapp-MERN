@@ -1,8 +1,6 @@
 /* In case of buyAt and sellAt, since our historical data isnt smooth execute order even if price is  
  * at +-0.03*price_at_that_time margin
  */
-const orderCompletionMarginConst = 0.03;
-
 
 const handleBuyNow = (balance, holding, order, currentPrice) => {
   // 1. Reduce balance
