@@ -171,12 +171,13 @@ function OrderTable(props) {
             <TableCell className={classes.head}>Coin</TableCell>
             <TableCell className={classes.head}>CoinCode</TableCell>
             <TableCell className={classes.head}>Amount</TableCell>
+            <TableCell className={classes.head}>Gains</TableCell>
             <TableCell className={classes.head}>Type</TableCell>
             <TableCell className={classes.head}>Status</TableCell>
             <TableCell className={classes.head}>Price At</TableCell>
           </TableRow>
         </TableHead>
-        
+
         <TableBody>
           {(rowsPerPage > 0
             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -192,6 +193,7 @@ function OrderTable(props) {
               </TableCell>
               <TableCell className={classes.tableCell}>{row.coin}</TableCell>
               <TableCell className={classes.tableCell}>{row.amount}</TableCell>
+              <TableCell className={classes.tableCell}>{row.gains}</TableCell>
               <TableCell className={classes.tableCell}>{row.type}</TableCell>
               <TableCell className={classes.tableCell}>{row.status}</TableCell>
               <TableCell className={classes.tableCell}>{row.priceat}</TableCell>
@@ -210,7 +212,7 @@ function OrderTable(props) {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
               colSpan={0}
-              sx={{ color:"white"}}
+              sx={{ color: "white" }}
               count={rows.length}
               rowsPerPage={rowsPerPage}
               page={page}

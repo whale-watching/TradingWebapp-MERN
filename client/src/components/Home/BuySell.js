@@ -33,7 +33,7 @@ const style = {
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: 400,
-    bgcolor: "black",
+    bgcolor: "#131721",
     color: "white",
     border: "2px solid #FFFFFF",
     boxShadow: 24,
@@ -44,7 +44,7 @@ const style = {
     height: "70%",
     maxWidth: 360,
     color: "white",
-    bgcolor: "black",
+    bgcolor: "#131722",
     borderRadius: 3,
   },
   dropList: {
