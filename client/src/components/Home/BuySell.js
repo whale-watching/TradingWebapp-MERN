@@ -33,7 +33,7 @@ const style = {
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: 400,
-    bgcolor: "black",
+    bgcolor: "#131721",
     color: "white",
     border: "2px solid #FFFFFF",
     boxShadow: 24,
@@ -44,7 +44,7 @@ const style = {
     height: "70%",
     maxWidth: 360,
     color: "white",
-    bgcolor: "black",
+    bgcolor: "#131722",
     borderRadius: 3,
   },
   dropList: {
@@ -122,8 +122,8 @@ export default function BuySell(props) {
       sybmol: convertNameToTradingviewSybmol(coin),
       coinSelectedName: coin,
       type: orderType,
-      amount: orderAmount,
-      executeWhenPriceAt: buyAtAmount,
+      amount: Number(orderAmount),
+      executeWhenPriceAt: Number(buyAtAmount),
       orderCompleted: true,
     };
     props.placeOrder(order);
@@ -135,8 +135,8 @@ export default function BuySell(props) {
       sybmol: convertNameToTradingviewSybmol(props.coinSelectedName),
       coinSelectedName: props.coinSelectedName,
       type: orderType,
-      amount: orderAmount,
-      executeWhenPriceAt: sortAtAmount,
+      amount: Number(orderAmount),
+      executeWhenPriceAt: Number(sortAtAmount),
       orderCompleted: true,
     };
     props.placeOrder(order);
@@ -148,8 +148,8 @@ export default function BuySell(props) {
       sybmol: convertNameToTradingviewSybmol(coin),
       coinSelectedName: coin,
       type: orderType,
-      amount: orderAmount,
-      executeWhenPriceAt: sellAtAmount,
+      amount: Number(orderAmount),
+      executeWhenPriceAt: Number(sellAtAmount),
       orderCompleted: true,
     };
     props.placeOrder(order);
@@ -388,7 +388,7 @@ export default function BuySell(props) {
                 label="Quantity"
                 variant="outlined"
                 onChange={(e) => {
-                  setOrderAmount(Number(e.target.value));
+                  setOrderAmount(e.target.value);
                 }}
               />
             </Stack>
@@ -471,7 +471,7 @@ export default function BuySell(props) {
                 label="Quantity"
                 variant="outlined"
                 onChange={(e) => {
-                  setOrderAmount(Number(e.target.value));
+                  setOrderAmount(e.target.value);
                 }}
               />
             </Stack>
@@ -486,7 +486,7 @@ export default function BuySell(props) {
                   label="Price"
                   variant="outlined"
                   onChange={(e) => {
-                    setSortAtAmount(Number(e.target.value));
+                    setSortAtAmount(e.target.value);
                   }}
                 />
               </Stack>
@@ -570,7 +570,7 @@ export default function BuySell(props) {
                 label="Quantity"
                 variant="outlined"
                 onChange={(e) => {
-                  setOrderAmount(Number(e.target.value));
+                  setOrderAmount(e.target.value);
                 }}
               />
             </Stack>
@@ -585,7 +585,7 @@ export default function BuySell(props) {
                   label="Price"
                   variant="outlined"
                   onChange={(e) => {
-                    setSellAtAmount(Number(e.target.value));
+                    setSellAtAmount(e.target.value);
                   }}
                 />
               </Stack>

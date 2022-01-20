@@ -6,6 +6,7 @@ import "./Home.css";
 import HeaderComp from "./HeaderComp";
 import Widget from "./Widget";
 import BuySell from "./BuySell";
+import OrderTable from "./OrderTable";
 
 import {
   handleBuyNow,
@@ -349,6 +350,9 @@ export default class Home extends Component {
             coinSelectedName={this.state.coinSelectedName}
             onChange={(value) => this.setState({ coinSelectedName: value })}
           />
+        </div>
+        <div className="Content">
+          <OrderTable allOrders={this.state.allOrders} />
         </div>
       </div>
     );
