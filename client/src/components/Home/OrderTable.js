@@ -134,7 +134,7 @@ function OrderTable(props) {
   const { classes } = props;
   
   let id = 0;
-  console.log(props.allOrders);
+  // console.log(props.allOrders);
 
   // This will insert all the orders in an array of objects in reversed order.
   props.allOrders.forEach(function (arrayItem) {

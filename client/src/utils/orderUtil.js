@@ -99,7 +99,8 @@ const executePrevCompletedOrders = async (allOrders, balance, holding, sortedHol
 
     for (let i=0; i<updatedAllOrders.length; i++) {
 		const order = updatedAllOrders[i];
-		if (!order.orderCompleted) {
+		console.log(order, order.orderCompleted, order.orderCompleted===false);
+		if (order.orderCompleted === false) {
 			if(!oldestUnfinishedOrderTime) {
 				console.log("oldest order that was not completed", order);
 				oldestUnfinishedOrderTime = order.time;
@@ -140,7 +141,7 @@ const executePrevCompletedOrders = async (allOrders, balance, holding, sortedHol
 	console.log("data fetched", historicalData);
 	console.log(typeof(oldestUnfinishedOrderTime), new Date(historicalData[0].date).getTime(), typeof(historicalData[0].date));
 
-	console.log(unfinishedOrders, unfinishedOrders[0]);
+	// console.log(unfinishedOrders, unfinishedOrders[0]);
 	for(let index in unfinishedOrders) {
 
 		let unfinishedOrder = unfinishedOrders[index];
@@ -155,7 +156,7 @@ const executePrevCompletedOrders = async (allOrders, balance, holding, sortedHol
 					console.log("\n\n price range matched", unfinishedOrder, Number(hisData.priceUsd));
 
 					// await till the current price is defined
-
+					//// improvement: only run for a fix time, 
 					while(getCurrentPrice()[unfinishedOrder.coinSelectedName] === null) {
 						console.log("current price not defined awaiting");
 						await new Promise(resolve => setTimeout(resolve, 500));
@@ -191,18 +192,14 @@ const executePrevCompletedOrders = async (allOrders, balance, holding, sortedHol
 					}
 
 					unfinishedOrder.orderCompleted = true;
+					updatedAllOrders[index] = unfinishedOrder;
 					break;
 				}
 			}
 		}
 	}
-	
 
-	for (let i=0; i<updatedAllOrders.length; i++) {
-		if(unfinishedOrders[i]) {
-			updatedAllOrders[i] = unfinishedOrders[i];
-		}
-    }
+	console.log(" updatedAllOrders", updatedAllOrders);
 
 	return {
 		newBalance: newBalanceAfterCompletingPrevOrders,
