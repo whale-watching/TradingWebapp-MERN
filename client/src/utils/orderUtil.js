@@ -91,7 +91,7 @@ const executePrevCompletedOrders = async (allOrders, balance, holding, sortedHol
 	// console.log(allOrders);
 
 	let updatedAllOrders = allOrders.slice();
-	console.log(updatedAllOrders);
+	// console.log(updatedAllOrders);
 
 
     let oldestUnfinishedOrderTime = null;
@@ -99,7 +99,7 @@ const executePrevCompletedOrders = async (allOrders, balance, holding, sortedHol
 
     for (let i=0; i<updatedAllOrders.length; i++) {
 		const order = updatedAllOrders[i];
-		console.log(order, order.orderCompleted, order.orderCompleted===false);
+		// console.log(order, order.orderCompleted, order.orderCompleted===false);
 		if (order.orderCompleted === false) {
 			if(!oldestUnfinishedOrderTime) {
 				console.log("oldest order that was not completed", order);

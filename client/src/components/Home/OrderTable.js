@@ -139,11 +139,14 @@ function OrderTable(props) {
   // This will insert all the orders in an array of objects in reversed order.
   props.allOrders.forEach(function (arrayItem) {
       id += 1;
+      // console.log(arrayItem);
       rows[props.allOrders.length - id] = {
         id: id,
+        time: arrayItem.time,
         name: arrayItem.coinSelectedName,
         coin: arrayItem.sybmol,
         amount: arrayItem.amount,
+        coinBought: arrayItem.coinBought,
         type: arrayItem.type,
         status: arrayItem.orderCompleted ? "true" : "false",
         priceat: arrayItem.executeWhenPriceAt,
@@ -163,17 +166,68 @@ function OrderTable(props) {
     setPage(0);
   };
 
+
+  const calculateGains = (order) => {
+    if(order.status === "false" || order.type === 'sellNow' || order.type === 'sellAt') {
+      return null;
+    }
+
+    if(order.type === 'buyNow') {
+      // console.log(order.coinBought, props.getCurrentPrice()[order.name], order.amount)
+      let currentWorth = parseFloat(order.coinBought) * parseFloat(props.getCurrentPrice()[order.name]);
+      let gain = currentWorth - parseFloat(order.amount);
+      gain = gain.toFixed(2);
+
+      return '$ '+gain;
+    }
+    else if(order.type === 'sortNow') {
+      let currentWorth = parseFloat(order.coinBought) * parseFloat(props.getCurrentPrice()[order.name]);
+      let gain = parseFloat(order.amount) - currentWorth;
+      gain = gain.toFixed(2);
+
+      return '$ '+gain;
+    }
+  }
+
+  const calculateGainPercent = (order) => {
+
+    if(order.status === "false" || order.type === 'sellNow' || order.type === 'sellAt') {
+      return null;
+    }
+
+    if(order.type === 'buyNow') {
+      // console.log(order.coinBought, props.getCurrentPrice()[order.name], order.amount)
+      let currentWorth = parseFloat(order.coinBought) * parseFloat(props.getCurrentPrice()[order.name]);
+      let gain = currentWorth - parseFloat(order.amount);
+
+      let gainPercent = gain/parseFloat(order.amount) * 100;
+      gainPercent = gainPercent.toFixed(2);
+      return gainPercent+'%';
+    }
+    else if(order.type === 'sortNow') {
+      let currentWorth = parseFloat(order.coinBought) * parseFloat(props.getCurrentPrice()[order.name]);
+      let gain = parseFloat(order.amount) - currentWorth;
+
+      let gainPercent = gain/parseFloat(order.amount) * 100;
+      gainPercent = gainPercent.toFixed(2);
+      return gainPercent+'%';
+    }
+  }
+
   return (
     <Paper className={classes.root}>
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
+            <TableCell className={classes.head}></TableCell>
+            <TableCell className={classes.head}>Time</TableCell>
             <TableCell className={classes.head}>Coin</TableCell>
             <TableCell className={classes.head}>CoinCode</TableCell>
             <TableCell className={classes.head}>Amount</TableCell>
             <TableCell className={classes.head}>Gains</TableCell>
+            <TableCell className={classes.head}>Gains Percent</TableCell>
             <TableCell className={classes.head}>Type</TableCell>
-            <TableCell className={classes.head}>Status</TableCell>
+            <TableCell className={classes.head}>Order Completed</TableCell>
             <TableCell className={classes.head}>Price At</TableCell>
           </TableRow>
         </TableHead>
@@ -189,14 +243,16 @@ function OrderTable(props) {
                 component="th"
                 scope="row"
               >
-                {row.name}
               </TableCell>
+              <TableCell className={classes.tableCell}>{new Date(row.time).toLocaleString()}</TableCell>
+              <TableCell className={classes.tableCell}>{row.name}</TableCell>
               <TableCell className={classes.tableCell}>{row.coin}</TableCell>
               <TableCell className={classes.tableCell}>{row.amount}</TableCell>
-              <TableCell className={classes.tableCell}>{row.gains}</TableCell>
+              <TableCell className={classes.tableCell}>{calculateGains(row)}</TableCell>
+              <TableCell className={classes.tableCell}>{calculateGainPercent(row)}</TableCell>
               <TableCell className={classes.tableCell}>{row.type}</TableCell>
               <TableCell className={classes.tableCell}>{row.status}</TableCell>
-              <TableCell className={classes.tableCell}>{row.priceat}</TableCell>
+              <TableCell className={classes.tableCell}>{row.priceat? row.priceat : null}</TableCell>
             </TableRow>
           ))}
 

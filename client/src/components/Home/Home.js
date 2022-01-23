@@ -92,8 +92,8 @@ export default class Home extends Component {
 
 
     // only update the userData in the localStorage if any newOrder was placed i.e allOrders was changed
-    // console.log(prevState.allOrders, this.state.allOrders)
-    if(! this.isEqual(prevState.allOrders, this.state.allOrders)) {
+    //// broken arraysEqual
+    // if(! this.arraysEqual(prevState.allOrders, this.state.allOrders)) {
       // console.log("both diff", prevState.allOrders, this.state.allOrders);
       let userData = {...this.state}; // all property of this.state except coinSelectedName, currentPrice
       delete userData.coinSelectedName;
@@ -101,71 +101,22 @@ export default class Home extends Component {
       delete userData.totalAssetAmt;
 
       window.localStorage.setItem("userData", JSON.stringify(userData));
-      console.log(" wrote to local storage", userData);
-    }
+      // console.log(" wrote to local storage", userData);
+    // }
 
   }
 
-  isEqual = (value, other) => {
-    
-    // Get the value type
-    var type = Object.prototype.toString.call(value);
-  
-    // If the two objects are not the same type, return false
-    if (type !== Object.prototype.toString.call(other)) return false;
-  
-    // If items are not an object or array, return false
-    if (['[object Array]', '[object Object]'].indexOf(type) < 0) return false;
-  
-    // Compare the length of the length of the two items
-    var valueLen = type === '[object Array]' ? value.length : Object.keys(value).length;
-    var otherLen = type === '[object Array]' ? other.length : Object.keys(other).length;
-    if (valueLen !== otherLen) return false;
-  
-    // Compare two items
-    const compare = (item1, item2) => {
-  
-      // Get the object type
-      var itemType = Object.prototype.toString.call(item1);
-  
-      // If an object or array, compare recursively
-      if (['[object Array]', '[object Object]'].indexOf(itemType) >= 0) {
-        if (!this.isEqual(item1, item2)) return false;
-      }
-  
-      // Otherwise, do a simple comparison
-      else {
-  
-        // If the two items are not the same type, return false
-        if (itemType !== Object.prototype.toString.call(item2)) return false;
-  
-        // Else if it's a function, convert to a string and compare
-        // Otherwise, just compare
-        if (itemType === '[object Function]') {
-          if (item1.toString() !== item2.toString()) return false;
-        } else {
-          if (item1 !== item2) return false;
-        }
-  
-      }
-    };
-  
-    // Compare properties
-    if (type === '[object Array]') {
-      for (var i = 0; i < valueLen; i++) {
-        if (compare(value[i], other[i]) === false) return false;
-      }
-    } else {
-      for (var key in value) {
-        if (value.hasOwnProperty(key)) {
-          if (compare(value[key], other[key]) === false) return false;
-        }
-      }
+  arraysEqual = (a1, a2) => {
+
+    const objectsEqual = (o1, o2) => {
+      return typeof o1 === 'object' && Object.keys(o1).length > 0 
+        ? Object.keys(o1).length === Object.keys(o2).length 
+            && Object.keys(o1).every(p => objectsEqual(o1[p], o2[p]))
+        : o1 === o2;
     }
-  
-    // If nothing failed, return true
-    return true;
-  };
+
+    return a1.length === a2.length && a1.every((o, idx) => objectsEqual(o, a2[idx]));
+  }
 
   async updateUserDataFromLocalStorage() {
     try {
@@ -353,6 +304,7 @@ export default class Home extends Component {
 
     switch (order.type) {
       case "buyNow": {
+        order.coinBought = order.amount/this.state.currentPrice[order.coinSelectedName];
         const { newBalance, newHolding } = handleBuyNow(
           this.state.balance,
           this.state.holding,
@@ -432,7 +384,10 @@ export default class Home extends Component {
           />
         </div>
         <div className="Content">
-          <OrderTable allOrders={this.state.allOrders} />
+          <OrderTable 
+            allOrders={this.state.allOrders}
+            getCurrentPrice = {this.getCurrentPrice}
+          />
         </div>
       </div>
     );
