@@ -123,7 +123,7 @@ const executePrevCompletedOrders = async (allOrders, balance, holding, sortedHol
 	}
 
 	// testing
-	oldestUnfinishedOrderTime = 1642633200000;
+	// oldestUnfinishedOrderTime = 1642633200000;
 
     // get historical data
     const historicalDataFetchUrl = `https://api.coincap.io/v2/assets/bitcoin/history?interval=h1&start?=${oldestUnfinishedOrderTime}`;
