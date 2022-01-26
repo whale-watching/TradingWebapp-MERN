@@ -15,6 +15,7 @@ import {
   handleSortAt,
   handleSellNow,
   handleSellAt,
+  handleSellSortNow,
 } from "./handleOrder";
 
 export default class Home extends Component {
@@ -327,7 +328,7 @@ export default class Home extends Component {
         break;
       }
 
-      case "sellNow":
+      case "sellNow": {
         const { newBalance, newHolding } = handleSellNow(
           this.state.balance,
           this.state.holding,
@@ -336,6 +337,7 @@ export default class Home extends Component {
         );
         this.setState({ balance: newBalance, holding: newHolding });
         break;
+      }
 
       case "buyAt":
         //
@@ -346,6 +348,21 @@ export default class Home extends Component {
         break;
 
       case "sellAt":
+        //
+        break;
+
+      case "sellSortNow": {
+        const { newBalance, newHolding } = handleSellSortNow(
+          this.state.balance,
+          this.state.sortedHolding,
+          order,
+          this.state.currentPrice
+        );
+        this.setState({ balance: newBalance, sortedHolding: newHolding });
+        break;
+    }
+        
+      case "sellSortAt": 
         //
         break;
 

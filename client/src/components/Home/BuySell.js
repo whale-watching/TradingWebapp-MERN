@@ -130,6 +130,7 @@ export default function BuySell(props) {
   const [buyAtAmount, setBuyAtAmount] = useState(null);
   const [sellAtAmount, setSellAtAmount] = useState(null);
   const [sortAtAmount, setSortAtAmount] = useState(null);
+  const [sellSortAtAmount, setSellSortAtAmount] = useState(null);
 
   const [selectedTab, setSelectedTab] = useState(0);
 
@@ -173,6 +174,20 @@ export default function BuySell(props) {
       executeWhenPriceAt: Number(sellAtAmount),
       orderCompleted: sellAtAmount ? false: true,
     };
+    props.placeOrder(order);
+  };
+
+  const handleSellSortModalClick = () => {
+    console.log("clicked on Sell Sort");
+    let order = {
+      sybmol: convertNameToTradingviewSybmol(coin),
+      coinSelectedName: coin,
+      type: orderType,
+      amount: Number(orderAmount),
+      executeWhenPriceAt: Number(sellAtAmount),
+      orderCompleted: sellAtAmount ? false : true,
+    };
+    console.log(order);
     props.placeOrder(order);
   };
 
@@ -242,10 +257,12 @@ export default function BuySell(props) {
         let currentCoinAmt = 0;// total amount of coins own
         let currentCoinWorth = 0; // price of the coin own;
 
-        for(let sortedHoldingOrder of sortedHolding[coinName]) {
+        for (let sortedHoldingOrder of sortedHolding[coinName]) {
           // worthThen + (worthThen - currentWorth) = 2*worthThen - currentWorth
           currentCoinAmt += sortedHoldingOrder.amount;
-          currentCoinWorth += 2*(sortedHoldingOrder.amount) - (sortedHoldingOrder.coinBought*props.currentPrice[coinName]);
+          currentCoinWorth +=
+            2 * sortedHoldingOrder.amount -
+            sortedHoldingOrder.coinBought * props.currentPrice[coinName];
         }
 
         // formatedSortedHolding += '';
@@ -526,7 +543,8 @@ export default function BuySell(props) {
         <button
           onClick={() => {
             handleSellOpen();
-            setOrderType("sellNow");
+            if (selectedTab === 0) setOrderType("sellNow");
+            else setOrderType("sellSortNow");
             // props.placeOrder();
             console.log("called sell");
           }}
@@ -535,9 +553,7 @@ export default function BuySell(props) {
           <span>Sell</span>
         </button>
         <Modal open={sellopen} onClose={() => setSellOpen(false)}>
-          <Box
-            sx={style.modal}
-          >
+          <Box sx={style.modal}>
             {/* <h3>Sell Modal text</h3> */}
             <AppBar sx={style.bgtext}>
               <Tabs
@@ -546,7 +562,10 @@ export default function BuySell(props) {
                 onChange={handleTabChange}
               >
                 <Tab sx={style.bgtext} label="Sell Normal" />
-                <Tab sx={style.bgtext} label="Sell Sort" />
+                <Tab
+                  sx={style.bgtext}
+                  label="Sell Sort"
+                />
               </Tabs>
             </AppBar>
 
@@ -642,7 +661,7 @@ export default function BuySell(props) {
                       row
                       aria-label="gender"
                       color="black"
-                      defaultValue="sellNow"
+                      defaultValue="sellSortNow"
                       name="row-radio-buttons-group"
                       onChange={(e) => {
                         setOrderType(e.target.value);
@@ -651,13 +670,13 @@ export default function BuySell(props) {
                     >
                       <FormControlLabel
                         sx={style.radioButton}
-                        value="sellNow"
+                        value="sellSortNow"
                         control={<Radio />}
                         label="SELL NOW"
                       />
                       <FormControlLabel
                         sx={style.radioButton}
-                        value="sellAt"
+                        value="sellSortAt"
                         control={<Radio />}
                         label="SELL AT"
                       />
@@ -676,25 +695,25 @@ export default function BuySell(props) {
                     }}
                   />
                 </Stack>
-                {orderType === "sellAt" && (
+                {orderType === "sellSortAt" && (
                   <Stack sx={style.stack} direction="row" spacing={2}>
                     <h3>Sell Sort at Price :</h3>
                     <TextField
                       sx={style.textBox}
-                      value={sellAtAmount}
+                      value={sellSortAtAmount}
                       id="outlined-basic"
                       type="number"
                       label="Price"
                       variant="outlined"
                       onChange={(e) => {
-                        setSellAtAmount(e.target.value);
+                        setSellSortAtAmount(e.target.value);
                       }}
                     />
                   </Stack>
                 )}
                 <button
                   className="button red-button"
-                  onClick={handleSellModalClick}
+                  onClick={handleSellSortModalClick}
                 >
                   <span>Sell Sort</span>
                 </button>
