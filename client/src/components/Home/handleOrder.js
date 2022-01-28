@@ -79,6 +79,48 @@ const handleSellNow = (balance, holding, order , currentPrice) => {
    };
 };
 
+const handleSellSortNow = (balance, sortedHolding, order, currentPrice) => {
+
+  if(currentPrice[order.coinSelectedName] < order.priceWhenOrderWasPlaced){
+    window.alert("You will suffer a loss");
+  }
+  
+  let newSellHolding = order.amount / currentPrice[order.coinSelectedName];
+
+  let newHolding = { ...sortedHolding };
+
+  let newBalance = balance ;
+
+  // The profit on selling on low .
+
+  let profit =
+    order.amount * (order.priceWhenOrderWasPlaced -  currentPrice[order.coinSelectedName]);
+  console.log(newHolding[order.coinSelectedName][0].coinBought);
+
+  console.log("New Sorted" + newSellHolding);
+  console.log("Profit" + profit);
+
+  if (newHolding[order.coinSelectedName][0].coinBought >= newSellHolding) {
+    // selling that coin/stocks
+    newHolding[order.coinSelectedName] -= newSellHolding;
+    newBalance = balance + profit;
+  } else {
+     window.alert("Not enough sorted holdings");
+  }
+
+  //If holdings are 0 delete the coin from holdings
+  
+  if (newHolding[order.coinSelectedName] == 0) {
+    delete newHolding[order.coinSelectedName];
+  }
+
+  return {
+    newBalance: newBalance,
+    newHolding: newHolding,
+  };
+  console.log("inside handlesell sortt");
+};
+
 const handleBuyAt = (balance, holding, order) => {};
 
 const handleSortAt = (balance, sortedHolding, order) => {};
@@ -92,4 +134,5 @@ module.exports = {
   handleBuyAt,
   handleSortAt,
   handleSellAt,
+  handleSellSortNow,
 };

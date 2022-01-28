@@ -15,7 +15,8 @@
 }
 
 .button {
-  color: white;
+  color: rgb(219, 212, 212);
+  background-color: black;
   text-decoration: none;
   border: none;
   padding: 18px 40px;
