@@ -21,9 +21,13 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  AppBar,
+  Tabs,
+  Tab
 } from "@mui/material";
 
 import { numberWithCommas } from "../../utils/miscUtil";
+import { StylesContext } from "@material-ui/styles";
 
 //Modal Styles
 const style = {
@@ -83,6 +87,17 @@ const style = {
     maxWidth: "50%",
     fontSize: "10px",
   },
+  bgtext: {
+    bgcolor: "#131721",
+    color: "white",
+  },
+  tabsAlign: {
+    display: "flex",
+    justifyContent: "center",
+  },
+  upMarign:{
+    marginTop: "30px",
+  }
 };
 
 export default function BuySell(props) {
@@ -115,6 +130,13 @@ export default function BuySell(props) {
   const [buyAtAmount, setBuyAtAmount] = useState(null);
   const [sellAtAmount, setSellAtAmount] = useState(null);
   const [sortAtAmount, setSortAtAmount] = useState(null);
+  const [sellSortAtAmount, setSellSortAtAmount] = useState(null);
+
+  const [selectedTab, setSelectedTab] = useState(0);
+
+  const handleTabChange = (event, newValue) => {
+    setSelectedTab(newValue);
+  }
 
   const handleBuyOrderClick = () => {
     console.log("clicked on buy");
@@ -152,6 +174,20 @@ export default function BuySell(props) {
       executeWhenPriceAt: Number(sellAtAmount),
       orderCompleted: sellAtAmount ? false: true,
     };
+    props.placeOrder(order);
+  };
+
+  const handleSellSortModalClick = () => {
+    console.log("clicked on Sell Sort");
+    let order = {
+      sybmol: convertNameToTradingviewSybmol(coin),
+      coinSelectedName: coin,
+      type: orderType,
+      amount: Number(orderAmount),
+      executeWhenPriceAt: Number(sellAtAmount),
+      orderCompleted: sellAtAmount ? false : true,
+    };
+    console.log(order);
     props.placeOrder(order);
   };
 
@@ -221,10 +257,12 @@ export default function BuySell(props) {
         let currentCoinAmt = 0;// total amount of coins own
         let currentCoinWorth = 0; // price of the coin own;
 
-        for(let sortedHoldingOrder of sortedHolding[coinName]) {
+        for (let sortedHoldingOrder of sortedHolding[coinName]) {
           // worthThen + (worthThen - currentWorth) = 2*worthThen - currentWorth
           currentCoinAmt += sortedHoldingOrder.amount;
-          currentCoinWorth += 2*(sortedHoldingOrder.amount) - (sortedHoldingOrder.coinBought*props.currentPrice[coinName]);
+          currentCoinWorth +=
+            2 * sortedHoldingOrder.amount -
+            sortedHoldingOrder.coinBought * props.currentPrice[coinName];
         }
 
         // formatedSortedHolding += '';
@@ -329,7 +367,7 @@ export default function BuySell(props) {
           {/* <ListItemText
             primary={`${getFormatedSortedHolding(props.sortedHolding)}`}
           /> */}
-        </ListItem> 
+        </ListItem>
       </List>
 
       {/*Buy Sell Sort Buttons Row Starts here*/}
@@ -505,7 +543,8 @@ export default function BuySell(props) {
         <button
           onClick={() => {
             handleSellOpen();
-            setOrderType("sellNow");
+            if (selectedTab === 0) setOrderType("sellNow");
+            else setOrderType("sellSortNow");
             // props.placeOrder();
             console.log("called sell");
           }}
@@ -515,10 +554,26 @@ export default function BuySell(props) {
         </button>
         <Modal open={sellopen} onClose={() => setSellOpen(false)}>
           <Box sx={style.modal}>
-            <h2>Sell Modal text</h2>
-            <Stack sx={style.stack} direction="row" spacing={2}>
-              <h3>Order type :</h3>
-              {/* <FormControl sx={style.dropList} fullWidth>
+            {/* <h3>Sell Modal text</h3> */}
+            <AppBar sx={style.bgtext}>
+              <Tabs
+                sx={style.tabsAlign}
+                value={selectedTab}
+                onChange={handleTabChange}
+              >
+                <Tab sx={style.bgtext} label="Sell Normal" />
+                <Tab
+                  sx={style.bgtext}
+                  label="Sell Sort"
+                />
+              </Tabs>
+            </AppBar>
+
+            {selectedTab === 0 ? (
+              <Box sx={style.upMarign}>
+                <Stack sx={style.stack} direction="row" spacing={2}>
+                  <h3>Order type :</h3>
+                  {/* <FormControl sx={style.dropList} fullWidth>
                 <InputLabel id="demo-simple-select-label">
                   Order Type
                 </InputLabel>
@@ -535,67 +590,135 @@ export default function BuySell(props) {
                   <MenuItem value={"sellNow"}>Sell Now</MenuItem>
                 </Select>
               </FormControl> */}
-              <FormControl sx={style.radioList} fullWidth>
-                <RadioGroup
-                  row
-                  aria-label="gender"
-                  color="black"
-                  defaultValue="sellNow"
-                  name="row-radio-buttons-group"
-                  onChange={(e) => {
-                    setOrderType(e.target.value);
-                    // console.log(orderType);
-                  }}
+                  <FormControl sx={style.radioList} fullWidth>
+                    <RadioGroup
+                      row
+                      aria-label="gender"
+                      color="black"
+                      defaultValue="sellNow"
+                      name="row-radio-buttons-group"
+                      onChange={(e) => {
+                        setOrderType(e.target.value);
+                        // console.log(orderType);
+                      }}
+                    >
+                      <FormControlLabel
+                        sx={style.radioButton}
+                        value="sellNow"
+                        control={<Radio />}
+                        label="SELL NOW"
+                      />
+                      <FormControlLabel
+                        sx={style.radioButton}
+                        value="sellAt"
+                        control={<Radio />}
+                        label="SELL AT"
+                      />
+                    </RadioGroup>
+                  </FormControl>
+                </Stack>
+                <Stack sx={style.stack} direction="row" spacing={2}>
+                  <h3>Sell Amount :</h3>
+                  <TextField
+                    sx={style.textBox}
+                    id="outlined-basic"
+                    label="Quantity"
+                    variant="outlined"
+                    onChange={(e) => {
+                      setOrderAmount(e.target.value);
+                    }}
+                  />
+                </Stack>
+                {orderType === "sellAt" && (
+                  <Stack sx={style.stack} direction="row" spacing={2}>
+                    <h3>Sell AT Price :</h3>
+                    <TextField
+                      sx={style.textBox}
+                      value={sellAtAmount}
+                      id="outlined-basic"
+                      type="number"
+                      label="Price"
+                      variant="outlined"
+                      onChange={(e) => {
+                        setSellAtAmount(e.target.value);
+                      }}
+                    />
+                  </Stack>
+                )}
+                <button
+                  className="button red-button"
+                  onClick={handleSellModalClick}
                 >
-                  <FormControlLabel
-                    sx={style.radioButton}
-                    value="sellNow"
-                    control={<Radio />}
-                    label="SELL NOW"
+                  <span>Sell</span>
+                </button>
+              </Box>
+            ) : (
+              <Box sx={style.upMarign}>
+                <Stack sx={style.stack} direction="row" spacing={2}>
+                  <h3>Order type :</h3>
+                  <FormControl sx={style.radioList} fullWidth>
+                    <RadioGroup
+                      row
+                      aria-label="gender"
+                      color="black"
+                      defaultValue="sellSortNow"
+                      name="row-radio-buttons-group"
+                      onChange={(e) => {
+                        setOrderType(e.target.value);
+                        // console.log(orderType);
+                      }}
+                    >
+                      <FormControlLabel
+                        sx={style.radioButton}
+                        value="sellSortNow"
+                        control={<Radio />}
+                        label="SELL NOW"
+                      />
+                      <FormControlLabel
+                        sx={style.radioButton}
+                        value="sellSortAt"
+                        control={<Radio />}
+                        label="SELL AT"
+                      />
+                    </RadioGroup>
+                  </FormControl>
+                </Stack>
+                <Stack sx={style.stack} direction="row" spacing={2}>
+                  <h3>Sell Amount :</h3>
+                  <TextField
+                    sx={style.textBox}
+                    id="outlined-basic"
+                    label="Quantity"
+                    variant="outlined"
+                    onChange={(e) => {
+                      setOrderAmount(e.target.value);
+                    }}
                   />
-                  <FormControlLabel
-                    sx={style.radioButton}
-                    value="sellAt"
-                    control={<Radio />}
-                    label="SELL AT"
-                  />
-                </RadioGroup>
-              </FormControl>
-            </Stack>
-            <Stack sx={style.stack} direction="row" spacing={2}>
-              <h3>Sell Amount :</h3>
-              <TextField
-                sx={style.textBox}
-                id="outlined-basic"
-                label="Quantity"
-                variant="outlined"
-                onChange={(e) => {
-                  setOrderAmount(e.target.value);
-                }}
-              />
-            </Stack>
-            {orderType === "sellAt" && (
-              <Stack sx={style.stack} direction="row" spacing={2}>
-                <h3>Sell AT Price :</h3>
-                <TextField
-                  sx={style.textBox}
-                  value={sellAtAmount}
-                  id="outlined-basic"
-                  type="number"
-                  label="Price"
-                  variant="outlined"
-                  onChange={(e) => {
-                    setSellAtAmount(e.target.value);
-                  }}
-                />
-              </Stack>
+                </Stack>
+                {orderType === "sellSortAt" && (
+                  <Stack sx={style.stack} direction="row" spacing={2}>
+                    <h3>Sell Sort at Price :</h3>
+                    <TextField
+                      sx={style.textBox}
+                      value={sellSortAtAmount}
+                      id="outlined-basic"
+                      type="number"
+                      label="Price"
+                      variant="outlined"
+                      onChange={(e) => {
+                        setSellSortAtAmount(e.target.value);
+                      }}
+                    />
+                  </Stack>
+                )}
+                <button
+                  className="button red-button"
+                  onClick={handleSellSortModalClick}
+                >
+                  <span>Sell Sort</span>
+                </button>
+              </Box>
             )}
-            <button
-              className="button red-button"
-              onClick={handleSellModalClick}
-            >
-              <span>Sell</span>
-            </button>
           </Box>
         </Modal>
       </div>

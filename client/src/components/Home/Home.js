@@ -2,7 +2,7 @@ import React, { Component, useState, useEffect } from "react";
 import axios from "axios";
 import { convertNameToTradingviewSybmol } from "../../utils/nameSymbol";
 import { getUpdatedTotalAssetAmt, executePrevCompletedOrders } from "../../utils/orderUtil"
-import "./Home.css";
+import "./BuySell.css";
 import HeaderComp from "./HeaderComp";
 import Widget from "./Widget";
 import BuySell from "./BuySell";
@@ -15,6 +15,7 @@ import {
   handleSortAt,
   handleSellNow,
   handleSellAt,
+  handleSellSortNow,
 } from "./handleOrder";
 
 export default class Home extends Component {
@@ -258,7 +259,7 @@ export default class Home extends Component {
   getCurrentPrice = () => {
     return this.state.currentPrice;
   }
-
+  
   updatePrevCompletedOrders = async () => {
 
     // console.log("got data when updatePrevOrder", this.state);
@@ -327,7 +328,7 @@ export default class Home extends Component {
         break;
       }
 
-      case "sellNow":
+      case "sellNow": {
         const { newBalance, newHolding } = handleSellNow(
           this.state.balance,
           this.state.holding,
@@ -336,6 +337,7 @@ export default class Home extends Component {
         );
         this.setState({ balance: newBalance, holding: newHolding });
         break;
+      }
 
       case "buyAt":
         //
@@ -346,6 +348,21 @@ export default class Home extends Component {
         break;
 
       case "sellAt":
+        //
+        break;
+
+      case "sellSortNow": {
+        const { newBalance, newHolding } = handleSellSortNow(
+          this.state.balance,
+          this.state.sortedHolding,
+          order,
+          this.state.currentPrice
+        );
+        this.setState({ balance: newBalance, sortedHolding: newHolding });
+        break;
+    }
+        
+      case "sellSortAt": 
         //
         break;
 
@@ -366,6 +383,9 @@ export default class Home extends Component {
   };
 
   render() {
+    const remove = () => {
+      localStorage.clear();
+    };
     return (
       <div className="Home">
         <HeaderComp />
@@ -383,10 +403,27 @@ export default class Home extends Component {
             onChange={(value) => this.setState({ coinSelectedName: value })}
           />
         </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "flex-end",
+            paddingBottom: "20px",
+            paddingRight: "30px",
+          }}
+        >
+          <h1 style={{ textAlign: "center", paddingRight: "500px" }}>
+            Order Table
+          </h1>
+          <button className="button" onClick={remove}>
+            <span>Reset</span>
+          </button>
+        </div>
         <div className="Content">
-          <OrderTable 
+          <OrderTable
             allOrders={this.state.allOrders}
-            getCurrentPrice = {this.getCurrentPrice}
+            getCurrentPrice={this.getCurrentPrice}
           />
         </div>
       </div>
