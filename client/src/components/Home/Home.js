@@ -389,10 +389,21 @@ export default class Home extends Component {
     console.log("order that was added: ", tempOrder);
   };
 
+  remove = () => {
+    console.log("pressed reset");
+    localStorage.clear();
+    this.setState({
+      lastTotalAssetChange: 'none',
+      totalAssetAmt: 10000,
+      balance: 10000,
+      holding: {},
+      sortedHolding: {},
+      allOrders: []
+    });
+    showToastSuccess(`All orders has been cleared`)
+  };
+
   render() {
-    const remove = () => {
-      localStorage.clear();
-    };
     return (
       <div className="Home">
         <HeaderComp />
@@ -423,7 +434,7 @@ export default class Home extends Component {
           <h1 style={{ textAlign: "center", paddingRight: "500px" }}>
             Order Table
           </h1>
-          <button className="button" onClick={remove}>
+          <button className="button" onClick={this.remove}>
             <span>Reset</span>
           </button>
         </div>

@@ -387,7 +387,7 @@ export default function BuySell(props) {
         </button>
         <Modal open={buyopen} onClose={() => setBuyOpen(false)}>
           <Box sx={style.modal}>
-            <h3>Buy Modal text</h3>
+            <h3>Buy Modal</h3>
             <Stack sx={style.stack} direction="row" spacing={2}>
               <h3>Order type :</h3>
               <FormControl sx={style.radioList} fullWidth>
@@ -424,7 +424,7 @@ export default function BuySell(props) {
                 value={orderAmount}
                 id="outlined-basic"
                 type="number"
-                label="Quantity"
+                label="Quantity (in $)"
                 variant="outlined"
                 onChange={(e) => {
                   setOrderAmount(e.target.value);
@@ -470,7 +470,7 @@ export default function BuySell(props) {
         </button>
         <Modal open={sortopen} onClose={() => setSortOpen(false)}>
           <Box sx={style.modal}>
-            <h3>Sort Modal text</h3>
+            <h3>Sort Modal</h3>
             <Stack sx={style.stack} direction="row" spacing={2}>
               <h3>Order type :</h3>
               <FormControl sx={style.radioList} fullWidth>
@@ -507,7 +507,7 @@ export default function BuySell(props) {
                 value={orderAmount}
                 id="outlined-basic"
                 type="number"
-                label="Quantity"
+                label="Quantity (in $)"
                 variant="outlined"
                 onChange={(e) => {
                   setOrderAmount(e.target.value);
@@ -623,7 +623,7 @@ export default function BuySell(props) {
                   <TextField
                     sx={style.textBox}
                     id="outlined-basic"
-                    label="Quantity"
+                    label="Quantity (in $)"
                     variant="outlined"
                     onChange={(e) => {
                       setOrderAmount(e.target.value);
@@ -689,6 +689,7 @@ export default function BuySell(props) {
                   <TextField
                     sx={style.textBox}
                     id="outlined-basic"
+                    type="number"
                     label="Quantity"
                     variant="outlined"
                     onChange={(e) => {
