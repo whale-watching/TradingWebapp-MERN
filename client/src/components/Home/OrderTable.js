@@ -247,7 +247,7 @@ function OrderTable(props) {
               <TableCell className={classes.tableCell}>{new Date(row.time).toLocaleString()}</TableCell>
               <TableCell className={classes.tableCell}>{row.name}</TableCell>
               <TableCell className={classes.tableCell}>{row.coin}</TableCell>
-              <TableCell className={classes.tableCell}>{row.amount}</TableCell>
+              <TableCell className={classes.tableCell}>{'$'+row.amount}</TableCell>
               <TableCell className={classes.tableCell}>{calculateGains(row)}</TableCell>
               <TableCell className={classes.tableCell}>{calculateGainPercent(row)}</TableCell>
               <TableCell className={classes.tableCell}>{row.type}</TableCell>

@@ -1,4 +1,4 @@
-import { showToastSuccess, showToastError } from "../../utils/toast";
+import { showToastSuccess, showToastError, showToastWarn } from "../../utils/toast";
 
 /* In case of buyAt and sellAt, since our historical data isnt smooth execute order even if price is
  * at +-0.03*price_at_that_time margin
@@ -109,8 +109,17 @@ const handleSellNow = (balance, holding, sortedHolding, order, currentPrice) => 
   };
 };
 
+// yet to be properly implemented
+// from the list of the all sortedOrders placed, sell the selected sortedOrder, sell all or none
 const handleSellSortNow = (balance, sortedHolding, order, currentPrice) => {
 
+  showToastWarn('Sell Sort Now is yet to be properly implemented!');
+  return {
+    success: false,
+    newBalance: balance,
+    newSortedHolding: sortedHolding,
+  }
+  /*
   if(currentPrice[order.coinSelectedName] < order.priceWhenOrderWasPlaced){
     window.alert("You will suffer a loss");
   }
@@ -149,6 +158,7 @@ const handleSellSortNow = (balance, sortedHolding, order, currentPrice) => {
     newHolding: newHolding,
   };
   console.log("inside handlesell sortt");
+  */
 };
 
 const handleBuyAt = (balance, holding, order) => {};

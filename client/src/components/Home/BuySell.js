@@ -200,6 +200,7 @@ export default function BuySell(props) {
 
   const handleSellSortModalClick = () => {
     console.log("clicked on Sell Sort");
+    handleSellClose();
     let order = {
       sybmol: convertNameToTradingviewSybmol(coin),
       coinSelectedName: coin,

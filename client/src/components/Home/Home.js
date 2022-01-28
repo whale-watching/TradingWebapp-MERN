@@ -17,7 +17,7 @@ import {
   handleSellSortNow,
 } from "./handleOrder";
 
-import { showToastSuccess, showToastError } from "../../utils/toast";
+import { showToastSuccess, showToastError, showToastWarn } from "../../utils/toast";
 
 import { numberWithCommas } from "../../utils/miscUtil";
 
@@ -359,18 +359,19 @@ export default class Home extends Component {
         break;
 
       case "sellSortNow": {
-        const { newBalance, newHolding } = handleSellSortNow(
+        const { success, newBalance, newSortedHolding } = handleSellSortNow(
           this.state.balance,
           this.state.sortedHolding,
           order,
           this.state.currentPrice
         );
-        this.setState({ balance: newBalance, sortedHolding: newHolding });
+        if(!success)  return;
+        this.setState({ balance: newBalance, sortedHolding: newSortedHolding });
         break;
     }
         
       case "sellSortAt": 
-        //
+        showToastWarn('Sell Sort At is yet to be properly implemented!');
         break;
 
       default:
