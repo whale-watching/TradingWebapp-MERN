@@ -1,6 +1,5 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { Component } from "react";
 import axios from "axios";
-import { convertNameToTradingviewSybmol } from "../../utils/nameSymbol";
 import { getUpdatedTotalAssetAmt, executePrevCompletedOrders } from "../../utils/orderUtil"
 import "./BuySell.css";
 import HeaderComp from "./HeaderComp";
@@ -17,6 +16,10 @@ import {
   handleSellAt,
   handleSellSortNow,
 } from "./handleOrder";
+
+import { showToastSuccess, showToastError } from "../../utils/toast";
+
+import { numberWithCommas } from "../../utils/miscUtil";
 
 export default class Home extends Component {
   constructor(props) {
@@ -297,7 +300,7 @@ export default class Home extends Component {
     // }
     
     if(this.state.currentPrice[order.coinSelectedName] === null) {
-      alert(`Order can't be placed websocket is not ready yet for the stock: ${order.coinSelectedName}`);
+      showToastError(`Order can't be placed websocket is not ready yet for the stock: ${order.coinSelectedName}`);
       return;
     }
 
@@ -306,49 +309,53 @@ export default class Home extends Component {
     switch (order.type) {
       case "buyNow": {
         order.coinBought = order.amount/this.state.currentPrice[order.coinSelectedName];
-        const { newBalance, newHolding } = handleBuyNow(
+        const { success, newBalance, newHolding } = handleBuyNow(
           this.state.balance,
           this.state.holding,
           order,
           this.state.currentPrice
         );
+        if(!success)  return;
         this.setState({ balance: newBalance, holding: newHolding });
         break;
       }
 
       case "sortNow": {
         order.coinBought = order.amount/this.state.currentPrice[order.coinSelectedName];
-        const { newBalance, newSortedHolding } = handleSortNow(
+        const { success, newBalance, newSortedHolding } = handleSortNow(
           this.state.balance,
           this.state.sortedHolding,
           order,
           this.state.currentPrice
         );
+        if(!success)  return;
         this.setState({ balance: newBalance, sortedHolding: newSortedHolding });
         break;
       }
 
       case "sellNow": {
-        const { newBalance, newHolding } = handleSellNow(
+        const { success, newBalance, newHolding } = handleSellNow(
           this.state.balance,
           this.state.holding,
+          this.state.sortedHolding,
           order,
           this.state.currentPrice
         );
+        if(!success)  return;
         this.setState({ balance: newBalance, holding: newHolding });
         break;
       }
 
       case "buyAt":
-        //
+        showToastSuccess(`Your buy order has been placed, it will be automatically executed when the price will reach $${numberWithCommas(order.executeWhenPriceAt)}`);
         break;
 
       case "sortAt":
-        //
+        showToastSuccess(`Your sort order has been placed, it will be automatically executed when the price will reach $${numberWithCommas(order.executeWhenPriceAt)}`);
         break;
 
       case "sellAt":
-        //
+        showToastSuccess(`Your sell order has been placed, it will be automatically executed when the price will reach $${numberWithCommas(order.executeWhenPriceAt)}`);
         break;
 
       case "sellSortNow": {

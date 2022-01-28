@@ -165,24 +165,26 @@ const executePrevCompletedOrders = async (allOrders, balance, holding, sortedHol
 
 				
 					if(unfinishedOrder.type === "buyAt") {
-						const { newBalance, newHolding } = handleBuyNow(
+						const { success, newBalance, newHolding } = handleBuyNow(
 							balance,
 							holding,
 							unfinishedOrder,
 							getCurrentPrice()
 						);
+						if(!success)	return;
 						console.log("order was", unfinishedOrder, getCurrentPrice());
 						console.log("executing buy at", newBalance, newHolding)
 						newBalanceAfterCompletingPrevOrders = newBalance;
 						newHoldingAfterCompletingPrevOrders = newHolding;
 					}
 					else if(unfinishedOrder.type === "sortAt") {
-						const { newBalance, newSortedHolding } = handleSortNow(
+						const { success, newBalance, newSortedHolding } = handleSortNow(
 							balance,
 							sortedHolding,
 							unfinishedOrder,
 							getCurrentPrice()
 						);
+						if(!success)	return;
 						console.log("executing sortAt", newBalance, newSortedHolding);
 						newBalanceAfterCompletingPrevOrders = newBalance;
 						newSortedHoldingAfterCompletingPrevOrders = newSortedHolding;
