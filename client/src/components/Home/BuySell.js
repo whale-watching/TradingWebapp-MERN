@@ -101,6 +101,15 @@ export default function BuySell(props) {
     props.onChange(event.target.value);
   };
 
+
+  //Buys Sell data states
+  const [orderType, setOrderType] = useState("");
+  const [orderAmount, setOrderAmount] = useState(null);
+  const [buyAtAmount, setBuyAtAmount] = useState(null);
+  const [sellAtAmount, setSellAtAmount] = useState(null);
+  const [sortAtAmount, setSortAtAmount] = useState(null);
+
+
   //Buy Sell Modal handlers
   const [buyopen, setBuyOpen] = useState(false);
   const [sellopen, setSellOpen] = useState(false);
@@ -109,15 +118,25 @@ export default function BuySell(props) {
   const handleSellOpen = () => setSellOpen(true);
   const handleSortOpen = () => setSortOpen(true);
 
-  //Buys Sell data states
-  const [orderType, setOrderType] = useState("");
-  const [orderAmount, setOrderAmount] = useState(0);
-  const [buyAtAmount, setBuyAtAmount] = useState(null);
-  const [sellAtAmount, setSellAtAmount] = useState(null);
-  const [sortAtAmount, setSortAtAmount] = useState(null);
+  const handleBuyClose = () => {
+    setBuyOpen(false);
+    setOrderAmount(null);
+    setBuyAtAmount(null);
+  }
+  const handleSellClose = () => {
+    setSellOpen(false);
+    setOrderAmount(null);
+    setSellAtAmount(null);
+  }
+  const handleSortClose = () => {
+    setSortOpen(false);
+    setOrderAmount(null);
+    setSortAtAmount(null);
+  }
 
   const handleBuyOrderClick = () => {
     console.log("clicked on buy");
+    handleBuyClose();
     let order = {
       sybmol: convertNameToTradingviewSybmol(coin),
       coinSelectedName: coin,
@@ -131,6 +150,7 @@ export default function BuySell(props) {
 
   const handleSortOrderClick = () => {
     console.log("clicked on sort");
+    handleSortClose();
     let order = {
       sybmol: convertNameToTradingviewSybmol(props.coinSelectedName),
       coinSelectedName: props.coinSelectedName,
@@ -143,6 +163,7 @@ export default function BuySell(props) {
   };
 
   const handleSellModalClick = () => {
+    handleSellClose();
     console.log("clicked on sell");
     let order = {
       sybmol: convertNameToTradingviewSybmol(coin),
@@ -151,26 +172,6 @@ export default function BuySell(props) {
       amount: Number(orderAmount),
       executeWhenPriceAt: Number(sellAtAmount),
       orderCompleted: sellAtAmount ? false: true,
-    };
-    props.placeOrder(order);
-  };
-
-  const Order = () => {
-    console.log(orderAmount);
-    let order = {
-      sybmol: convertNameToTradingviewSybmol(coin),
-      coinSelectedName: coin,
-      type: orderType,
-      amount: orderAmount,
-      executeWhenPriceAt:
-        orderType === "buyAt"
-          ? buyAtAmount
-          : orderType === "sellAt"
-          ? sellAtAmount
-          : orderType === "sortAt"
-          ? sortAtAmount
-          : 0,
-      orderCompleted: true,
     };
     props.placeOrder(order);
   };
