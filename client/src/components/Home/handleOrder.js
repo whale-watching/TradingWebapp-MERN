@@ -1,8 +1,19 @@
-/* In case of buyAt and sellAt, since our historical data isnt smooth execute order even if price is  
+import { showToastSuccess, showToastError, showToastWarn } from "../../utils/toast";
+
+/* In case of buyAt and sellAt, since our historical data isnt smooth execute order even if price is
  * at +-0.03*price_at_that_time margin
  */
 
 const handleBuyNow = (balance, holding, order, currentPrice) => {
+  if (balance - order.amount < 0) {
+    showToastError(`Buy Order can't be executed not enough balance`);
+    return {
+      success: false,
+      newBalance: balance,
+      newHolding: holding,
+    };
+  }
+
   // 1. Reduce balance
   let newBalance = balance - order.amount;
 
@@ -19,13 +30,24 @@ const handleBuyNow = (balance, holding, order, currentPrice) => {
     newHolding[order.coinSelectedName] += newBoughtHolding;
   }
 
+  showToastSuccess(`Buy Order executed successfully for amount: $${order.amount}`);
   return {
+    success: true,
     newBalance: newBalance,
     newHolding: newHolding,
   };
 };
 
 const handleSortNow = (balance, sortedHolding, order, currentPrice) => {
+  if (balance - order.amount < 0) {
+    showToastError(`Sort Order can't be executed not enough balance`);
+    return {
+      success: false,
+      newBalance: balance,
+      newSortedHolding: sortedHolding,
+    };
+  }
+
   // 1. Reduce balance
   let newBalance = balance - order.amount;
 
@@ -46,41 +68,58 @@ const handleSortNow = (balance, sortedHolding, order, currentPrice) => {
     newSortedHolding[order.coinSelectedName].push(sortedOrder);
   }
 
+  showToastSuccess(`Sort Order executed successfully for amount: $${order.amount}`);
   return {
+    success: true,
     newBalance: newBalance,
     newSortedHolding: newSortedHolding,
   };
 };
 
-const handleSellNow = (balance, holding, order , currentPrice) => {
+const handleSellNow = (balance, holding, sortedHolding, order, currentPrice) => {
+  let newSellHolding = order.amount / currentPrice[order.coinSelectedName]; //Calculating current price of the coin to be sold.
+  let newHolding = { ...holding };
+  let newBalance = balance;
 
-    //Calculating current price of the coin to be sold.
-   let newSellHolding = order.amount / currentPrice[order.coinSelectedName];
+  if (newHolding[order.coinSelectedName] < newSellHolding) {
+    showToastError(
+      `Sell Order can not be placed not enough holding for ${order.coinSelectedName}`
+    );
+    return {
+      success: false,
+      newBalance: newBalance,
+      newHolding: newHolding,
+    };
+  }
 
-   let newHolding = { ...holding };
+  // selling that coin/stocks
+  newHolding[order.coinSelectedName] -= newSellHolding;
+  newBalance = balance + order.amount;
 
-   let newBalance = balance;
+  //If holdings are 0 delete the coin from holdings
+  if (newHolding[order.coinSelectedName] == 0) {
+    delete newHolding[order.coinSelectedName];
+  }
 
-   if (newHolding[order.coinSelectedName] >= newSellHolding) {
-     // selling that coin/stocks
-     newHolding[order.coinSelectedName] -= newSellHolding;
-     newBalance = balance + order.amount;
-   } else {
-     window.alert("Not enough holdings");
-   }
-    //If holdings are 0 delete the coin from holdings
-   if (newHolding[order.coinSelectedName] == 0) {
-     delete newHolding[order.coinSelectedName];
-   }
-   
-   return {
-     newBalance: newBalance,
-     newHolding: newHolding,
-   };
+  showToastSuccess(`Sell Order executed successfully for amount: $${order.amount}`);
+  return {
+    success: true,
+    newBalance: newBalance,
+    newHolding: newHolding,
+  };
 };
 
+// yet to be properly implemented
+// from the list of the all sortedOrders placed, sell the selected sortedOrder, sell all or none
 const handleSellSortNow = (balance, sortedHolding, order, currentPrice) => {
 
+  showToastWarn('Sell Sort Now is yet to be properly implemented!');
+  return {
+    success: false,
+    newBalance: balance,
+    newSortedHolding: sortedHolding,
+  }
+  /*
   if(currentPrice[order.coinSelectedName] < order.priceWhenOrderWasPlaced){
     window.alert("You will suffer a loss");
   }
@@ -119,6 +158,7 @@ const handleSellSortNow = (balance, sortedHolding, order, currentPrice) => {
     newHolding: newHolding,
   };
   console.log("inside handlesell sortt");
+  */
 };
 
 const handleBuyAt = (balance, holding, order) => {};
@@ -127,7 +167,7 @@ const handleSortAt = (balance, sortedHolding, order) => {};
 
 const handleSellAt = (balance, holding, sortedHolding, order) => {};
 
-module.exports = {
+export {
   handleBuyNow,
   handleSortNow,
   handleSellNow,

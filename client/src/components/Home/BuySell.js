@@ -116,6 +116,16 @@ export default function BuySell(props) {
     props.onChange(event.target.value);
   };
 
+
+  //Buys Sell data states
+  const [orderType, setOrderType] = useState("");
+  const [orderAmount, setOrderAmount] = useState(null);
+  const [buyAtAmount, setBuyAtAmount] = useState(null);
+  const [sellAtAmount, setSellAtAmount] = useState(null);
+  const [sortAtAmount, setSortAtAmount] = useState(null);
+  const [sellSortAtAmount, setSellSortAtAmount] = useState(null);
+
+
   //Buy Sell Modal handlers
   const [buyopen, setBuyOpen] = useState(false);
   const [sellopen, setSellOpen] = useState(false);
@@ -124,13 +134,21 @@ export default function BuySell(props) {
   const handleSellOpen = () => setSellOpen(true);
   const handleSortOpen = () => setSortOpen(true);
 
-  //Buys Sell data states
-  const [orderType, setOrderType] = useState("");
-  const [orderAmount, setOrderAmount] = useState(0);
-  const [buyAtAmount, setBuyAtAmount] = useState(null);
-  const [sellAtAmount, setSellAtAmount] = useState(null);
-  const [sortAtAmount, setSortAtAmount] = useState(null);
-  const [sellSortAtAmount, setSellSortAtAmount] = useState(null);
+  const handleBuyClose = () => {
+    setBuyOpen(false);
+    setOrderAmount(null);
+    setBuyAtAmount(null);
+  }
+  const handleSellClose = () => {
+    setSellOpen(false);
+    setOrderAmount(null);
+    setSellAtAmount(null);
+  }
+  const handleSortClose = () => {
+    setSortOpen(false);
+    setOrderAmount(null);
+    setSortAtAmount(null);
+  }
 
   const [selectedTab, setSelectedTab] = useState(0);
 
@@ -140,6 +158,7 @@ export default function BuySell(props) {
 
   const handleBuyOrderClick = () => {
     console.log("clicked on buy");
+    handleBuyClose();
     let order = {
       sybmol: convertNameToTradingviewSybmol(coin),
       coinSelectedName: coin,
@@ -153,6 +172,7 @@ export default function BuySell(props) {
 
   const handleSortOrderClick = () => {
     console.log("clicked on sort");
+    handleSortClose();
     let order = {
       sybmol: convertNameToTradingviewSybmol(props.coinSelectedName),
       coinSelectedName: props.coinSelectedName,
@@ -165,6 +185,7 @@ export default function BuySell(props) {
   };
 
   const handleSellModalClick = () => {
+    handleSellClose();
     console.log("clicked on sell");
     let order = {
       sybmol: convertNameToTradingviewSybmol(coin),
@@ -179,6 +200,7 @@ export default function BuySell(props) {
 
   const handleSellSortModalClick = () => {
     console.log("clicked on Sell Sort");
+    handleSellClose();
     let order = {
       sybmol: convertNameToTradingviewSybmol(coin),
       coinSelectedName: coin,
@@ -188,26 +210,6 @@ export default function BuySell(props) {
       orderCompleted: sellAtAmount ? false : true,
     };
     console.log(order);
-    props.placeOrder(order);
-  };
-
-  const Order = () => {
-    console.log(orderAmount);
-    let order = {
-      sybmol: convertNameToTradingviewSybmol(coin),
-      coinSelectedName: coin,
-      type: orderType,
-      amount: orderAmount,
-      executeWhenPriceAt:
-        orderType === "buyAt"
-          ? buyAtAmount
-          : orderType === "sellAt"
-          ? sellAtAmount
-          : orderType === "sortAt"
-          ? sortAtAmount
-          : 0,
-      orderCompleted: true,
-    };
     props.placeOrder(order);
   };
 
@@ -386,7 +388,7 @@ export default function BuySell(props) {
         </button>
         <Modal open={buyopen} onClose={() => setBuyOpen(false)}>
           <Box sx={style.modal}>
-            <h3>Buy Modal text</h3>
+            <h3>Buy Modal</h3>
             <Stack sx={style.stack} direction="row" spacing={2}>
               <h3>Order type :</h3>
               <FormControl sx={style.radioList} fullWidth>
@@ -423,7 +425,7 @@ export default function BuySell(props) {
                 value={orderAmount}
                 id="outlined-basic"
                 type="number"
-                label="Quantity"
+                label="Quantity (in $)"
                 variant="outlined"
                 onChange={(e) => {
                   setOrderAmount(e.target.value);
@@ -469,7 +471,7 @@ export default function BuySell(props) {
         </button>
         <Modal open={sortopen} onClose={() => setSortOpen(false)}>
           <Box sx={style.modal}>
-            <h3>Sort Modal text</h3>
+            <h3>Sort Modal</h3>
             <Stack sx={style.stack} direction="row" spacing={2}>
               <h3>Order type :</h3>
               <FormControl sx={style.radioList} fullWidth>
@@ -506,7 +508,7 @@ export default function BuySell(props) {
                 value={orderAmount}
                 id="outlined-basic"
                 type="number"
-                label="Quantity"
+                label="Quantity (in $)"
                 variant="outlined"
                 onChange={(e) => {
                   setOrderAmount(e.target.value);
@@ -622,7 +624,7 @@ export default function BuySell(props) {
                   <TextField
                     sx={style.textBox}
                     id="outlined-basic"
-                    label="Quantity"
+                    label="Quantity (in $)"
                     variant="outlined"
                     onChange={(e) => {
                       setOrderAmount(e.target.value);
@@ -688,6 +690,7 @@ export default function BuySell(props) {
                   <TextField
                     sx={style.textBox}
                     id="outlined-basic"
+                    type="number"
                     label="Quantity"
                     variant="outlined"
                     onChange={(e) => {
