@@ -103,8 +103,13 @@ export default class Home extends Component {
       delete userData.coinSelectedName;
       delete userData.currentPrice;
       delete userData.totalAssetAmt;
-
+      
+      
       window.localStorage.setItem("userData", JSON.stringify(userData));
+      // console.log("in home inside component did update" + JSON.stringify(userData));
+     
+      if(prevState.balance != this.state.balance)
+      this.updateDbFromLocalStorage();
       // console.log(" wrote to local storage", userData);
     // }
 
@@ -125,7 +130,7 @@ export default class Home extends Component {
   async updateUserDataFromLocalStorage() {
     try {
       let userDataLocalStorage = JSON.parse(window.localStorage.getItem("userData"));
-      // console.log("userdata in localStorage", userDataLocalStorage);
+       console.log("userdata in localStorage", userDataLocalStorage);
 
       if (userDataLocalStorage) {
         const {userId, email, name, balance, holding, sortedHolding, allOrders} = userDataLocalStorage;
@@ -136,10 +141,47 @@ export default class Home extends Component {
     }
     catch(err) {
       console.log("cant read userData from local storage",err);
-      window.localStorage.setItem("userData", ""); // if some data cant be read reset.
+      // window.localStorage.setItem("userData", ""); // if some data cant be read reset.
     }
 
   }
+
+  async updateDbFromLocalStorage() {
+     try {
+       const headers = {
+         "Content-Type": "application/json",
+         charset: "UTF-8",
+       };
+
+       let user = JSON.parse(window.localStorage.getItem("userData"));
+       console.log("THis is uid" + JSON.stringify(user));
+       
+
+       var data = {
+         email: user.email,
+         userId: user.userId,
+         holding: user.holding,
+         balance: user.balance,
+         allOrders: user.allOrders,
+         sortedHolding: user.sortedHolding,
+       };
+       const res = await axios({
+         method: "POST",
+         data : data,
+         headers: { headers },
+         withCredentials: true,
+         url: "/user/updateUserData",
+       });
+
+       if (res.data.success) {
+         console.log("Data Update in Db from Local Success: ", res.data);
+       }
+
+     } catch (err) {
+       console.log("Data Update in Db from Local Failed", err);
+     }
+    
+  };
 
   quickUpdateCurrentPriceUsingApi() {
 
@@ -403,7 +445,7 @@ export default class Home extends Component {
     });
     showToastSuccess(`All orders has been cleared`)
   };
-
+  
   render() {
     return (
       <div className="Home">
