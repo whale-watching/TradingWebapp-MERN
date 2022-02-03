@@ -4,8 +4,7 @@ const {
   generate10DigitAlphaNumeric,
 } = require("../util/randomNumberGenerator");
 
-const { getUserDb } = require("../config/database");
-
+const { getUserDb, getUserData } = require("../config/database");
 
 let action = {};
 
@@ -13,7 +12,8 @@ action.login = (req, res, done) => {
   console.log("got data from frontend = ", req.body);
 
   const data = req.body;
-
+  
+  
   if (!data.email) {
     return res.status(422).json({
       errors: {
@@ -29,6 +29,7 @@ action.login = (req, res, done) => {
       },
     });
   }
+  
 
   return passport.authenticate(
     "local",
@@ -62,7 +63,6 @@ action.login = (req, res, done) => {
           error: info.message,
         });
       }
-
     }
   )(req, res, done);
 };
@@ -77,14 +77,35 @@ action.register = async (req, res, callback) => {
   const id = generate10DigitAlphaNumeric();
   const { name, email, password } = req.body;
 
+  const userDb = await getUserDb();
+  const userData = await getUserData();
+
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const userDb = await getUserDb();
+    var allOrders = [];
+    var balance = 10000;
+    var holding = {};
+    var lastTotalAssetChange = "none";
+    var sortedHolding = {};
 
-    const dbResult = await userDb
-      .insertOne({ id, name, email, hashedPassword });
+    const dbResult = await userDb.insertOne({
+      id,
+      name,
+      email,
+      hashedPassword,
+    });
+    const dbDataResult = await userData.insertOne({
+      id,
+      email,
+      allOrders,
+      balance,
+      holding,
+      lastTotalAssetChange,
+      sortedHolding,
+    });
     console.log("added user to db ", dbResult.ops[0]);
+    console.log("added initial userdata to db ", dbDataResult);
 
     // res.redirect("/login");
   } catch (err) {
@@ -93,10 +114,61 @@ action.register = async (req, res, callback) => {
   }
 };
 
-action.updateUserDetails = (req, res, callback) => {};
+action.updateUserDetails = (req, res, callback) => {
+};
+
+action.updateUserData = (req, res, callback) => {
+  const userData = getUserData();
+  let reqData = req.body;
+  console.log("Got data from localstorage " + reqData);
+  
+  try {
+     userData
+       .updateOne(
+         { email: reqData.email },
+         {
+           $set: {
+             holding: reqData.holding,
+             balance: reqData.balance,
+             sortedHolding: reqData.sortedHolding,
+             allOrders: reqData.allOrders,
+           },
+         }
+       )
+       .then(function (result) {
+         console.log("Result in update user.js" + result);
+         return res.json({
+           success: true,
+           userData: result[0],
+         });
+       });
+  } catch (err) {
+    console.log("Error getting userdata from Local");
+  }
+  
+}
 
 action.getUserDetails = (req, res, callback) => {};
 
-action.getUserOrder = (req, res, callback) => {};
+action.getUserOrder = (req, res, callback) => {
+  const userData = getUserData();
+  let data = req.body.id;
+  console.log("in user api" + data);
+  try{
+
+     var userOrderObject = userData.find({id : String(data)}).toArray();
+    //  console.log("User Object in user.js " + JSON.parse(userOrderObject));
+      userOrderObject.then(function (result) {
+        console.log("Result in user.js" + result)
+        return res.json({
+          success: true,
+          userData : result,
+        });
+      });
+
+    } catch(err) {
+      console.log("Error getting userdata from DB"); 
+    }
+};;
 
 module.exports = action;

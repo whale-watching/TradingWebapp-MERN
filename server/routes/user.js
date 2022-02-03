@@ -10,6 +10,7 @@ router.post("/updateUserDetails", user.updateUserDetails); // Guest user registe
 
 // for logged in user
 router.get("/userDetails", user.getUserDetails);
-router.get("/userOrder", user.getUserOrder);
+router.post("/userOrder", user.getUserOrder);
+router.post("/updateUserData", user.updateUserData);
 
 module.exports = router;

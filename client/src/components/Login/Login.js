@@ -10,6 +10,7 @@ function Login(props) {
 
   const [emailLog, setEmailLog] = useState("");
   const [passwordLog, setPasswordLog] = useState("");
+  const [stateId, setStateId] = useState("");
   const [data, setData] = useState(null);
 
   // To make a Login HTTP Request
@@ -18,7 +19,7 @@ function Login(props) {
       "Content-Type": "application/json",
       charset: "UTF-8",
     };
-
+    console.log("Reached login");
     const res = await axios({
       method: "POST",
       data: {
@@ -30,18 +31,46 @@ function Login(props) {
       url: "/user/login",
     });
 
+    // console.log("User id in Login " + res.data.user.id);
+
     if(res.data.success) {
       console.log("login success user data: ", res.data.user);
 
-      // save session to local storage
-      window.localStorage.setItem('userData', JSON.stringify(res.data.user));
+       setStateId(res.data.user.id);
 
+       console.log("ejifwef" + stateId);
+       
+       var data = {
+         email: emailLog,
+         password: passwordLog,
+         id: res.data.user.id,
+       };
+
+       const resOrders = await axios({
+         method: "POST",
+         data: data,
+         headers: { headers },
+         withCredentials: true,
+         url: "/user/userOrder",
+       });
+
+       if (resOrders.data.success) {
+         console.log("resOrders Response " + JSON.stringify(resOrders.data.userData));
+       }
+
+      // save session to local storage
+       let dataFromUser = res.data.user;
+       let dataFromUserData = resOrders.data.userData[0];
+       
+       let user = {
+         ...dataFromUser , ...dataFromUserData
+       };
+      window.localStorage.setItem("userData", JSON.stringify(dataFromUserData));
       // redirect to /
       window.location.href = '/'; //relative to domain
 
     }
     
-    console.log("send login axios");
   };
 
   const handleSubmit = (e) => {
