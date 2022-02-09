@@ -11,6 +11,7 @@ Currently Live At: https://semi-automatic-trader-client.herokuapp.com
 
 ## Screenshot
 <a href="https://imgur.com/6d1ZwpP"><img src="https://i.imgur.com/6d1ZwpP.png" title="source: imgur.com 1" /></a>
+
 <a href="https://imgur.com/U3MpTLQ"><img src="https://i.imgur.com/U3MpTLQ.png" title="source: imgur.com 2" /></a>
 
 
