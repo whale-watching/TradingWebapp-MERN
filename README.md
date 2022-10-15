@@ -1,5 +1,5 @@
 
-# SemiAutomatic trading WebApp
+# SemiAutomatic MERN Stack trading WebApp
 A GUI based **programmable** stock/crypto trading interface. You can program when you want to buy/sell/sort stocks, the webpage will automatically execute your order when that price is reached. Profits/loss are displayed in real time.
 
 
