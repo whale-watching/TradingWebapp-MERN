@@ -33,7 +33,7 @@ export default class Home extends Component {
       email: null,
       name: null,
 
-      lastTotalAssetChange: 'none',
+      lastTotalAssetChange: "none",
 
       totalAssetAmt: '',
       balance: 10000,
@@ -43,7 +43,7 @@ export default class Home extends Component {
 
       allOrders: [],
 
-      coinSelectedName: "bitcoin", // default
+      coinSelectedName: 'bitcoin', // default
 
       currentPrice: {
         bitcoin: null,
